@@ -216,7 +216,7 @@ function PoemCard({ poem, isActive, currentIndex, cardIndex }: {
       </div>
 
       {/* Poem content in the center */}
-      <div className="relative z-20 max-w-4xl w-full flex-1 flex flex-col justify-center text-center px-6 md:px-8 self-center px-[24px] py-[0px]">
+      <div className="poem-content relative z-20 max-w-4xl w-full flex-1 flex flex-col justify-center text-center px-6 md:px-8 self-center px-[24px] py-[0px]">
         <TypewriterText
           text={(() => {
             const text = poem.htmlText || poem.text.replace(/\n/g, '<br/>');

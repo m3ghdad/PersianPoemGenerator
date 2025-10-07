@@ -218,6 +218,15 @@ html, body {
   /* Prevent content shifting when modals/sheets open */
 }
 
+/* Lock poem content layout after 743px so only background video scales */
+@media (min-width: 743px) {
+  .poem-content {
+    max-width: 743px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
 /* Card transitions */
 .card-transition {
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
