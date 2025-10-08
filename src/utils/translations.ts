@@ -345,8 +345,6 @@ export const translations: Record<Language, Translations> = {
     forgotPassword: 'فراموشی رمز عبور',
     backToSignIn: 'بازگشت به ورود',
     resetLinkSent: 'لینک تغییر رمز عبور به ایمیل شما ارسال شد',
-    orContinueWith: 'یا ادامه با',
-    signInWithGoogle: 'ورود با Google',
     useEmailInstead: 'استفاده از ایمیل',
     continueWithGoogle: 'ادامه با Google',
 
@@ -359,7 +357,6 @@ export const translations: Record<Language, Translations> = {
     specialCharacter: '• یک کاراکتر خاص (!@#$%^&*)',
     passwordsMatch: '✓ رمز عبور مطابقت دارد',
     passwordsDontMatch: '✗ رمز عبور مطابقت ندارد',
-    nameRequired: 'نام الزامی است',
     emailAlreadyExists: 'این ایمیل قبلاً ثبت شده است. آیا می‌خواهید وارد شوید؟',
     signInNow: 'اکنون وارد شوم',
     invalidCredentials: 'ایمیل یا رمز عبور اشتباه است',
@@ -373,7 +370,6 @@ export const translations: Record<Language, Translations> = {
     addFavoritesPrompt: 'اشعار مورد علاقه‌تان را با ضربه بر قلب اضافه کنید',
     goBack: 'بازگشت',
     addedOn: 'افزوده شده در',
-    removedFromFavorites: 'از علاقه‌مندی‌ها حذف شد',
     favoritePoems: 'اشعار علاقه‌مندی',
 
     // More sheet
@@ -547,8 +543,6 @@ export const translations: Record<Language, Translations> = {
     forgotPassword: 'Forgot Password',
     backToSignIn: 'Back to Sign In',
     resetLinkSent: 'Reset link sent to your email',
-    orContinueWith: 'or continue with',
-    signInWithGoogle: 'Sign in with Google',
     useEmailInstead: 'Use email instead',
     continueWithGoogle: 'Continue with Google',
 
@@ -561,7 +555,6 @@ export const translations: Record<Language, Translations> = {
     specialCharacter: '• One special character (!@#$%^&*)',
     passwordsMatch: '✓ Passwords match',
     passwordsDontMatch: '✗ Passwords don\'t match',
-    nameRequired: 'Name is required',
     emailAlreadyExists: 'This email is already registered. Would you like to sign in?',
     signInNow: 'Sign in now',
     invalidCredentials: 'Invalid email or password',
@@ -575,7 +568,6 @@ export const translations: Record<Language, Translations> = {
     addFavoritesPrompt: 'Add your favorite poems by tapping the heart',
     goBack: 'Go Back',
     addedOn: 'Added on',
-    removedFromFavorites: 'Removed from favorites',
     favoritePoems: 'Favorite Poems',
 
     // More sheet
