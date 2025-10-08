@@ -105,103 +105,14 @@ export function DraggableFavoritesSheet({
 
     setLoading(true);
     try {
-      console.log("=== DEBUG: Loading favorites ===");
-      console.log("User object:", {
-        id: user.id,
-        email: user.email,
-        metadata: user.user_metadata
-      });
-      
-      const { projectId } = await import("../utils/supabase/info");
-      console.log("Project ID:", projectId);
-      
-      const supabaseClient = (await import("../utils/supabase/client")).createClient();
-      const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
-
-      console.log("Session data:", {
-        hasSession: !!session,
-        hasAccessToken: !!session?.access_token,
-        tokenPreview: session?.access_token ? session.access_token.substring(0, 20) + '...' : 'none',
-        error: sessionError
-      });
-
-      if (sessionError) {
-        console.error("Session error:", sessionError);
-        
-        // Handle refresh token errors specifically
-        if (sessionError.message.includes('refresh_token_not_found') || 
-            sessionError.message.includes('Invalid Refresh Token')) {
-          console.log('Invalid refresh token detected, attempting session refresh');
-          const refreshResult = await refreshSession();
-          if (refreshResult.error) {
-            toast.error('Session expired. Please sign in again.');
-            onOpenChange(false); // Close the favorites sheet
-            return;
-          }
-          // Retry loading favorites after refresh
-          toast.success('Session refreshed successfully');
-          setTimeout(() => loadFavorites(), 1000);
-          return;
-        }
-        
-        toast.error(t.pleaseLoginAgain);
-        return;
-      }
-
-      if (!session?.access_token) {
-        console.error("No access token found in session");
-        
-        // Try to refresh the session
-        console.log('No access token, attempting session refresh');
-        const refreshResult = await refreshSession();
-        if (refreshResult.error) {
-          toast.error('Session expired. Please sign in again.');
-          onOpenChange(false); // Close the favorites sheet
-          return;
-        }
-        // Retry loading favorites after refresh
-        setTimeout(() => loadFavorites(), 1000);
-        return;
-      }
-
-      const url = `https://${projectId}.supabase.co/functions/v1/make-server-c192d0ee/favorites`;
-      console.log("Making request to:", url);
-      
-      const response = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      console.log("Response status:", response.status);
-      console.log("Response headers:", Object.fromEntries(response.headers.entries()));
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Favorites loaded successfully:", data.favorites?.length || 0, "items");
-        setFavoritePoems(data.favorites || []);
-      } else {
-        const errorText = await response.text();
-        console.error("Failed to load favorites - Response:", response.status, errorText);
-        
-        if (response.status === 401) {
-          console.error("Authorization failed - attempting session refresh");
-          const refreshResult = await refreshSession();
-          if (refreshResult.error) {
-            toast.error('Session expired. Please sign in again.');
-            onOpenChange(false); // Close the favorites sheet
-          } else {
-            // Retry loading favorites after refresh
-            setTimeout(() => loadFavorites(), 1000);
-          }
-        } else {
-          toast.error(`Error loading favorites: ${response.status}`);
-        }
-      }
+      // Load favorites from localStorage (client-side only)
+      const favoritesKey = `favorites_${user.id}`;
+      const favorites = JSON.parse(localStorage.getItem(favoritesKey) || '[]');
+      console.log(`Loaded ${favorites.length} favorites from localStorage`);
+      setFavoritePoems(favorites);
     } catch (error) {
-      console.error("Failed to load favorites - Network/Other error:", error);
-      toast.error(`Network error loading favorites: ${error.message}`);
+      console.error("Failed to load favorites:", error);
+      toast.error("خطا در بارگذاری علاقه‌مندی‌ها");
     } finally {
       setLoading(false);
     }
@@ -211,41 +122,23 @@ export function DraggableFavoritesSheet({
     if (!user) return;
 
     try {
-      const { projectId } = await import("../utils/supabase/info");
-      const { data: { session } } = await (await import("../utils/supabase/client"))
-        .createClient()
-        .auth.getSession();
-
-      if (!session?.access_token) {
-        toast.error(t.pleaseLoginAgain);
-        return;
-      }
-
-      const response = await fetch(
-        `https://${projectId}.supabase.co/functions/v1/make-server-c192d0ee/favorites/${poemId}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${session.access_token}`,
-          },
-        },
-      );
-
-      if (response.ok) {
-        setFavoritePoems(prev => prev.filter(poem => poem.id !== poemId));
-        toast.success(t.removedFromFavorites);
-        
-        // Adjust current index if needed
-        if (currentIndex >= favoritePoems.length - 1) {
-          setCurrentIndex(Math.max(0, favoritePoems.length - 2));
-        }
-      } else {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to remove favorite");
+      // Remove from localStorage
+      const favoritesKey = `favorites_${user.id}`;
+      const favorites = JSON.parse(localStorage.getItem(favoritesKey) || '[]');
+      const updatedFavorites = favorites.filter((fav: any) => fav.id !== poemId);
+      localStorage.setItem(favoritesKey, JSON.stringify(updatedFavorites));
+      
+      // Update state
+      setFavoritePoems(prev => prev.filter(poem => poem.id !== poemId));
+      toast.success(t.removedFromFavorites);
+      
+      // Adjust current index if needed
+      if (currentIndex >= favoritePoems.length - 1) {
+        setCurrentIndex(Math.max(0, favoritePoems.length - 2));
       }
     } catch (error) {
       console.error("Failed to remove favorite:", error);
-      toast.error(t.removedFromFavorites.replace('Removed', 'Error removing'));
+      toast.error("خطا در حذف از علاقه‌مندی‌ها");
     } finally {
       setShowConfirmDelete(null);
     }

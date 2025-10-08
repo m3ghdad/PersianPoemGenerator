@@ -30,29 +30,11 @@ export function FavoriteButton({ poem, onAuthRequired }: FavoriteButtonProps) {
   useEffect(() => {
     if (!user || !poem?.id) return;
 
-    const checkFavoriteStatus = async () => {
-      try {
-        const { projectId } = await import('../utils/supabase/info');
-        const { data: { session } } = await (await import('../utils/supabase/client')).createClient().auth.getSession();
-        
-        if (!session?.access_token) return;
-
-        const response = await fetch(`https://${projectId}.supabase.co/functions/v1/make-server-c192d0ee/favorites/${poem.id}/status`, {
-          headers: {
-            'Authorization': `Bearer ${session.access_token}`,
-          },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setIsFavorited(data.isFavorited);
-        }
-      } catch (error) {
-        console.error('Failed to check favorite status:', error);
-      }
-    };
-
-    checkFavoriteStatus();
+    // Use localStorage for favorites (client-side only)
+    const favoritesKey = `favorites_${user.id}`;
+    const favorites = JSON.parse(localStorage.getItem(favoritesKey) || '[]');
+    const isFav = favorites.some((fav: any) => fav.id === poem.id);
+    setIsFavorited(isFav);
   }, [user, poem?.id]);
 
   const handleFavorite = async () => {
@@ -68,65 +50,35 @@ export function FavoriteButton({ poem, onAuthRequired }: FavoriteButtonProps) {
 
     setIsLoading(true);
     try {
-      const { projectId } = await import('../utils/supabase/info');
-      const { data: { session } } = await (await import('../utils/supabase/client')).createClient().auth.getSession();
-      
-      if (!session?.access_token) {
-        toast.error('لطفاً دوباره وارد شوید');
-        onAuthRequired();
-        return;
-      }
+      const favoritesKey = `favorites_${user.id}`;
+      const favorites = JSON.parse(localStorage.getItem(favoritesKey) || '[]');
       
       if (!isFavorited) {
         // Add to favorites
-        const response = await fetch(`https://${projectId}.supabase.co/functions/v1/make-server-c192d0ee/favorites`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${session.access_token}`,
-          },
-          body: JSON.stringify({
-            poem: {
-              id: poem.id,
-              title: poem.title,
-              text: poem.text,
-              htmlText: poem.htmlText,
-              poet: poem.poet
-            }
-          }),
+        const newFavorite = {
+          id: poem.id,
+          title: poem.title,
+          text: poem.text,
+          htmlText: poem.htmlText,
+          poet: poem.poet,
+          favoritedAt: new Date().toISOString()
+        };
+        
+        const updatedFavorites = [...favorites, newFavorite];
+        localStorage.setItem(favoritesKey, JSON.stringify(updatedFavorites));
+        setIsFavorited(true);
+        
+        toast.success('شعر به علاقه‌مندی‌ها اضافه شد', {
+          description: `اثر ${poem.poet.name}`,
+          duration: 3000,
         });
-
-        if (response.ok) {
-          setIsFavorited(true);
-          toast.success('شعر به علاقه‌مندی‌ها اضافه شد', {
-            description: `اثر ${poem.poet.name}`,
-            duration: 3000,
-          });
-        } else {
-          const errorData = await response.json();
-          if (response.status === 409) {
-            toast.warning('این شعر قبلاً به علاقه‌مندی‌ها اضافه شده است');
-            setIsFavorited(true);
-          } else {
-            throw new Error(errorData.error || 'Failed to add favorite');
-          }
-        }
       } else {
         // Remove from favorites
-        const response = await fetch(`https://${projectId}.supabase.co/functions/v1/make-server-c192d0ee/favorites/${poem.id}`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${session.access_token}`,
-          },
-        });
-
-        if (response.ok) {
-          setIsFavorited(false);
-          toast.success('شعر از علاقه‌مندی‌ها حذف شد');
-        } else {
-          const errorData = await response.json();
-          throw new Error(errorData.error || 'Failed to remove favorite');
-        }
+        const updatedFavorites = favorites.filter((fav: any) => fav.id !== poem.id);
+        localStorage.setItem(favoritesKey, JSON.stringify(updatedFavorites));
+        setIsFavorited(false);
+        
+        toast.success('شعر از علاقه‌مندی‌ها حذف شد');
       }
     } catch (error) {
       console.error('Failed to toggle favorite:', error);
