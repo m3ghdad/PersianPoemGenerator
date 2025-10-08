@@ -747,6 +747,45 @@ function AppContent() {
     return successResult;
   }, [language, explanationCache, generateLocalExplanation]);
 
+  // Prefetch poems in background for instant loading
+  const prefetchEnglishPoems = async () => {
+    console.log('🔄 Starting background prefetch of English poems...');
+    
+    try {
+      // Check how many we already have cached
+      const cachedIds: number[] = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key?.startsWith('translated_poem_')) {
+          const id = parseInt(key.replace('translated_poem_', ''));
+          if (!isNaN(id)) cachedIds.push(id);
+        }
+      }
+      
+      console.log(`Found ${cachedIds.length} cached translations`);
+      
+      // If we have enough cached, we're good
+      if (cachedIds.length >= 8) {
+        console.log('✓ Already have enough cached poems');
+        return;
+      }
+      
+      // Fetch and translate poems in background
+      const persianPoems = await fetchRandomPoems(10);
+      if (persianPoems.length === 0) return;
+      
+      console.log(`Prefetching ${persianPoems.length} poems in background...`);
+      
+      // Translate in parallel
+      const promises = persianPoems.map(poem => translatePoem(poem).catch(() => null));
+      await Promise.all(promises);
+      
+      console.log('✓ Background prefetch complete');
+    } catch (error) {
+      console.warn('Background prefetch failed:', error);
+    }
+  };
+
   // Re-enabled translation with proper error handling
   const translatePoem = async (poem: Poem): Promise<Poem | null> => {
     try {
@@ -956,12 +995,53 @@ POET:
           }
         }
       } else {
-        // English mode: fetch Persian poems and translate them
-        console.log('Loading English poems - fetching Persian poems to translate...');
+        // English mode: Load from cache first for instant 2-3s loading
+        console.log('Loading English poems - checking cache...');
         
-        // Fetch fewer poems initially for faster loading (5 instead of 8)
+        // Get cached translations
+        const cachedPoems: Poem[] = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key?.startsWith('translated_poem_')) {
+            try {
+              const poem = JSON.parse(localStorage.getItem(key) || '');
+              if (poem) cachedPoems.push(poem);
+            } catch (e) {
+              // Skip invalid cache entries
+            }
+          }
+        }
+        
+        if (cachedPoems.length >= 8) {
+          // We have enough cached poems - show them instantly!
+          console.log(`✓ Loading ${cachedPoems.length} cached poems instantly`);
+          const poemsToShow = cachedPoems.slice(0, 8);
+          setPoems(poemsToShow);
+          setUsingMockData(false);
+          setLoading(false);
+          
+          // Continue loading more in background
+          setTimeout(() => {
+            console.log('🔄 Loading additional poems in background...');
+            loadMorePoems();
+          }, 1000);
+          return;
+        }
+        
+        // Not enough cached - fetch and translate
+        console.log(`Only ${cachedPoems.length} cached poems, fetching more...`);
+        
+        // Show cached poems immediately while loading more
+        if (cachedPoems.length > 0) {
+          console.log(`Showing ${cachedPoems.length} cached poems while loading more...`);
+          setPoems(cachedPoems);
+          setUsingMockData(false);
+        }
+        
+        // Fetch poems to translate
+        const neededCount = Math.max(8 - cachedPoems.length, 5);
         const persianPoems = await Promise.race([
-          fetchRandomPoems(5),
+          fetchRandomPoems(neededCount),
           new Promise<Poem[]>((resolve) => 
             setTimeout(() => {
               console.log('Persian fetch timeout for translation');
@@ -994,23 +1074,34 @@ POET:
           const translatedPoems = results.filter((p): p is Poem => p !== null);
           
           if (translatedPoems.length > 0) {
-            console.log(`✓ Successfully translated ${translatedPoems.length} poems to English in parallel`);
-            setPoems(translatedPoems);
+            console.log(`✓ Successfully translated ${translatedPoems.length} new poems to English`);
+            const allPoems = [...cachedPoems, ...translatedPoems].slice(0, 8);
+            setPoems(allPoems);
             setUsingMockData(false);
             setLoading(false);
             
-            // Preload more poems in the background for smooth scrolling
+            // Preload more poems in the background
             setTimeout(() => {
               console.log('🔄 Preloading additional poems in background...');
               loadMorePoems();
             }, 2000);
           } else {
-            console.error('Failed to translate any poems');
-            setLoading(false);
+            // If no new translations, just use cached
+            if (cachedPoems.length > 0) {
+              setLoading(false);
+            } else {
+              console.error('Failed to translate any poems');
+              setLoading(false);
+            }
           }
         } else {
-          console.error('Failed to fetch Persian poems for translation');
-          setLoading(false);
+          // If fetch failed, use cached if available
+          if (cachedPoems.length > 0) {
+            setLoading(false);
+          } else {
+            console.error('Failed to fetch Persian poems for translation');
+            setLoading(false);
+          }
         }
       }
     } catch (error) {
@@ -1334,6 +1425,17 @@ POET:
       loadInitialPoems();
     }, 100);
   };
+
+  // Prefetch English poems when language selection screen is shown
+  useEffect(() => {
+    if (!hasSelectedLanguage && !isLoadingPreference) {
+      console.log('Language selection screen shown - starting background prefetch');
+      // Start prefetching after a short delay to not block UI
+      setTimeout(() => {
+        prefetchEnglishPoems();
+      }, 1000);
+    }
+  }, [hasSelectedLanguage, isLoadingPreference]);
 
   // Handle language selection from selection screen
   const handleLanguageSelect = async (selectedLanguage: 'fa' | 'en') => {
