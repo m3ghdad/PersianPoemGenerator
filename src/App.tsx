@@ -750,28 +750,61 @@ function AppContent() {
   // Re-enabled translation with proper error handling
   const translatePoem = async (poem: Poem): Promise<Poem | null> => {
     try {
-      console.log(`Translating poem ${poem.id} to English`);
+      console.log(`Translating poem ${poem.id} to English with OpenAI`);
       
+      // Get OpenAI API key from environment variable
+      const openaiApiKey = import.meta.env.VITE_OPENAI_API_KEY;
+      
+      if (!openaiApiKey) {
+        console.warn('OpenAI API key not configured');
+        return null;
+      }
+
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 12000); // 12 second timeout
+      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
       
-      const response = await fetch(`https://${projectId}.supabase.co/functions/v1/make-server-c192d0ee/translate`, {
+      const prompt = `Translate this Persian poem to English while preserving its poetic beauty, meter, and meaning. Keep the same line structure:
+
+${poem.text}
+
+Title: ${poem.title}
+Poet: ${poem.poet.name}
+
+Please provide:
+1. A translation that maintains the artistic and literary quality of the original Persian poetry
+2. The English translation of the poem title "${poem.title}"
+3. The English name/transliteration of the poet "${poem.poet.name}"
+
+Format your response as:
+POEM:
+[translated poem text]
+
+TITLE:
+[English title]
+
+POET:
+[English name of poet]`;
+
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${publicAnonKey}`
+          'Authorization': `Bearer ${openaiApiKey}`
         },
         body: JSON.stringify({
-          poem: {
-            id: poem.id,
-            text: poem.text,
-            title: poem.title,
-            poet: {
-              id: poem.poet.id,
-              name: poem.poet.name || 'Unknown',
-              fullName: poem.poet.fullName || poem.poet.name || 'Unknown'
+          model: 'gpt-4o-mini',
+          messages: [
+            {
+              role: 'system',
+              content: 'You are an expert translator of Persian poetry to English. Preserve the poetic beauty, rhythm, and meaning while making it accessible to English readers. Maintain the line structure of the original. Also provide English translations for poem titles and English names/transliterations for Persian poets (e.g., حافظ = Hafez, مولانا = Rumi, سعدی = Saadi, فردوسی = Ferdowsi, نظامی = Nezami, عمر خیام = Omar Khayyam). For titles, translate them appropriately (e.g., غزل = Ghazal, رباعی = Quatrain, مثنوی = Masnavi).'
+            },
+            {
+              role: 'user',
+              content: prompt
             }
-          }
+          ],
+          max_tokens: 800,
+          temperature: 0.7
         }),
         signal: controller.signal
       });
@@ -779,34 +812,67 @@ function AppContent() {
       clearTimeout(timeoutId);
 
       if (!response.ok) {
-        console.warn(`Translation API error: ${response.status}`);
+        console.warn(`OpenAI API error: ${response.status}`);
         return null;
       }
 
       const result = await response.json();
-      
-      if (!result.translatedPoem) {
-        console.warn('Translation API returned no translated poem');
+      const translation = result.choices[0]?.message?.content?.trim();
+
+      if (!translation) {
+        console.warn('OpenAI returned no translation');
         return null;
       }
 
-      // Extract poet name - handle both string and object responses
-      let poetName = poem.poet.name || 'Unknown Poet';
+      // Parse the response to extract poem, title, and poet name
+      let translatedText = translation;
+      let translatedTitle = poem.title; // Default to original
+      let poetName = poem.poet.name; // Default to original
       
-      if (result.translatedPoem.poet) {
-        if (typeof result.translatedPoem.poet === 'string' && result.translatedPoem.poet.trim()) {
-          poetName = result.translatedPoem.poet.trim();
-        } else if (typeof result.translatedPoem.poet === 'object' && result.translatedPoem.poet.name) {
-          poetName = String(result.translatedPoem.poet.name).trim();
+      // Try to extract poem, title, and poet from structured response
+      const poemMatch = translation.match(/POEM:\s*([\s\S]*?)(?=TITLE:|POET:|$)/);
+      const titleMatch = translation.match(/TITLE:\s*(.*?)(?:\n|$)/);
+      const poetMatch = translation.match(/POET:\s*(.*?)(?:\n|$)/);
+      
+      if (poemMatch && poemMatch[1]) {
+        translatedText = poemMatch[1].trim();
+      }
+      
+      if (titleMatch && titleMatch[1]) {
+        translatedTitle = titleMatch[1].trim();
+      }
+      
+      if (poetMatch && poetMatch[1]) {
+        poetName = poetMatch[1].trim();
+      } else {
+        // Fallback: try to detect and translate common Persian poet names
+        const persianToEnglish: Record<string, string> = {
+          'حافظ': 'Hafez',
+          'مولانا': 'Rumi', 
+          'سعدی': 'Saadi',
+          'فردوسی': 'Ferdowsi',
+          'نظامی': 'Nezami',
+          'عمر خیام': 'Omar Khayyam',
+          'خیام': 'Khayyam',
+          'عطار': 'Attar',
+          'جامی': 'Jami',
+          'رودکی': 'Rudaki'
+        };
+        
+        for (const [persian, english] of Object.entries(persianToEnglish)) {
+          if (poem.poet.name.includes(persian)) {
+            poetName = english;
+            break;
+          }
         }
       }
 
-      // Create translated poem object with safe string conversions
+      // Create translated poem object
       const translatedPoem = {
         id: poem.id + 1000, // Offset to avoid ID conflicts
-        title: (result.translatedPoem.title || poem.title || 'Untitled').toString(),
-        text: (result.translatedPoem.text || poem.text || '').toString(),
-        htmlText: (result.translatedPoem.htmlText || result.translatedPoem.text?.replace(/\n/g, '<br/>') || poem.htmlText || '').toString(),
+        title: translatedTitle,
+        text: translatedText,
+        htmlText: translatedText.replace(/\n/g, '<br/>'),
         poet: {
           id: poem.poet.id,
           name: poetName,
@@ -818,7 +884,7 @@ function AppContent() {
       return translatedPoem;
 
     } catch (error) {
-      if (error.name === 'AbortError') {
+      if ((error as Error).name === 'AbortError') {
         console.warn('Translation request timed out');
       } else {
         console.warn('Translation error:', error);
