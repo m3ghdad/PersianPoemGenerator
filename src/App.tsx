@@ -750,6 +750,20 @@ function AppContent() {
   // Re-enabled translation with proper error handling
   const translatePoem = async (poem: Poem): Promise<Poem | null> => {
     try {
+      // Check cache first for instant loading
+      const cacheKey = `translated_poem_${poem.id}`;
+      const cached = localStorage.getItem(cacheKey);
+      
+      if (cached) {
+        try {
+          const cachedPoem = JSON.parse(cached);
+          console.log(`✓ Using cached translation for poem ${poem.id}`);
+          return cachedPoem;
+        } catch (e) {
+          console.warn('Failed to parse cached translation, will fetch new');
+        }
+      }
+      
       console.log(`Translating poem ${poem.id} to English with OpenAI`);
       
       // Get OpenAI API key from environment variable
@@ -880,6 +894,15 @@ POET:
         }
       };
 
+      // Cache the translation for instant loading next time
+      const cacheKey = `translated_poem_${poem.id}`;
+      try {
+        localStorage.setItem(cacheKey, JSON.stringify(translatedPoem));
+        console.log(`✓ Translation cached for poem ${poem.id}`);
+      } catch (e) {
+        console.warn('Failed to cache translation:', e);
+      }
+
       console.log(`✓ Translation successful for poem ${poem.id}`, 'Poet:', translatedPoem.poet.name);
       return translatedPoem;
 
@@ -937,51 +960,51 @@ POET:
         // English mode: fetch Persian poems and translate them
         console.log('Loading English poems - fetching Persian poems to translate...');
         
-        // First fetch Persian poems
+        // Fetch fewer poems initially for faster loading (5 instead of 8)
         const persianPoems = await Promise.race([
-          fetchRandomPoems(8),
+          fetchRandomPoems(5),
           new Promise<Poem[]>((resolve) => 
             setTimeout(() => {
               console.log('Persian fetch timeout for translation');
               resolve([]);
-            }, 12000)
+            }, 10000)
           )
         ]);
         
         if (persianPoems.length > 0) {
-          console.log(`Fetched ${persianPoems.length} Persian poems, starting translation...`);
-          const translatedPoems: Poem[] = [];
+          console.log(`Fetched ${persianPoems.length} Persian poems, starting parallel translation...`);
           
-          // Translate poems one by one
-          for (const poem of persianPoems) {
-            try {
-              const translated = await Promise.race([
-                translatePoem(poem),
-                new Promise<Poem | null>((resolve) => 
-                  setTimeout(() => {
-                    console.log(`Translation timeout for poem ${poem.id}`);
-                    resolve(null);
-                  }, 15000) // Longer timeout for translation
-                )
-              ]);
-              
-              if (translated) {
-                translatedPoems.push(translated);
-                console.log(`✓ Translated poem ${poem.id} (${translatedPoems.length}/${persianPoems.length})`);
-              }
-              
-              // Small delay between translations
-              await new Promise(resolve => setTimeout(resolve, 300));
-            } catch (error) {
+          // Translate poems in parallel for much faster loading
+          const translationPromises = persianPoems.map(poem => 
+            Promise.race([
+              translatePoem(poem),
+              new Promise<Poem | null>((resolve) => 
+                setTimeout(() => {
+                  console.log(`Translation timeout for poem ${poem.id}`);
+                  resolve(null);
+                }, 15000)
+              )
+            ]).catch(error => {
               console.warn('Translation failed for poem:', poem.id, String(error));
-            }
-          }
+              return null;
+            })
+          );
+          
+          // Wait for all translations to complete
+          const results = await Promise.all(translationPromises);
+          const translatedPoems = results.filter((p): p is Poem => p !== null);
           
           if (translatedPoems.length > 0) {
-            console.log(`✓ Successfully translated ${translatedPoems.length} poems to English`);
+            console.log(`✓ Successfully translated ${translatedPoems.length} poems to English in parallel`);
             setPoems(translatedPoems);
             setUsingMockData(false);
             setLoading(false);
+            
+            // Preload more poems in the background for smooth scrolling
+            setTimeout(() => {
+              console.log('🔄 Preloading additional poems in background...');
+              loadMorePoems();
+            }, 2000);
           } else {
             console.error('Failed to translate any poems');
             setLoading(false);
@@ -1031,7 +1054,7 @@ POET:
         console.log('Fetching and translating more Persian poems to English...');
         
         const persianPoems = await Promise.race([
-          fetchRandomPoems(5), // Reduced for translation load
+          fetchRandomPoems(5),
           new Promise<Poem[]>((resolve) => 
             setTimeout(() => {
               console.log('Persian fetch timeout for translation');
@@ -1041,32 +1064,26 @@ POET:
         ]);
         
         if (persianPoems.length > 0) {
-          console.log(`Translating ${persianPoems.length} Persian poems to English...`);
-          const translatedPoems: Poem[] = [];
+          console.log(`Translating ${persianPoems.length} Persian poems to English in parallel...`);
           
-          // Translate poems one by one
-          for (const poem of persianPoems) {
-            try {
-              const translated = await Promise.race([
-                translatePoem(poem),
-                new Promise<Poem | null>((resolve) => 
-                  setTimeout(() => resolve(null), 10000)
-                )
-              ]);
-              
-              if (translated) {
-                translatedPoems.push(translated);
-              }
-              
-              // Small delay between translations
-              await new Promise(resolve => setTimeout(resolve, 200));
-            } catch (error) {
+          // Translate poems in parallel for faster loading
+          const translationPromises = persianPoems.map(poem => 
+            Promise.race([
+              translatePoem(poem),
+              new Promise<Poem | null>((resolve) => 
+                setTimeout(() => resolve(null), 15000)
+              )
+            ]).catch(error => {
               console.warn('Translation failed for poem:', poem.id, error);
-            }
-          }
+              return null;
+            })
+          );
+          
+          const results = await Promise.all(translationPromises);
+          const translatedPoems = results.filter((p): p is Poem => p !== null);
           
           if (translatedPoems.length > 0) {
-            console.log(`✓ Successfully translated ${translatedPoems.length} more poems to English`);
+            console.log(`✓ Successfully translated ${translatedPoems.length} more poems to English in parallel`);
             setPoems(prev => [...prev, ...translatedPoems]);
           } else {
             console.error('Failed to translate any poems');
