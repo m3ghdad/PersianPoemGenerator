@@ -836,7 +836,7 @@ export function AuthSheet({ open, onOpenChange }: AuthSheetProps) {
                                     <button
                                       type="button"
                                       onClick={() => switchMode('signup')}
-                                      className="text-muted-foreground hover:text-foreground text-sm transition-colors text-right"
+                                      className="text-muted-foreground hover:text-foreground text-sm transition-colors text-center"
                                     >
                                       {t.dontHaveAccount} {t.createAccountLink}
                                     </button>
@@ -872,7 +872,7 @@ export function AuthSheet({ open, onOpenChange }: AuthSheetProps) {
                             <button
                               type="button"
                               onClick={() => switchMode('signup')}
-                              className="text-muted-foreground hover:text-foreground text-sm transition-colors text-right"
+                              className="text-muted-foreground hover:text-foreground text-sm transition-colors text-center"
                             >
                               {t.dontHaveAccount} {t.createAccountLink}
                             </button>
