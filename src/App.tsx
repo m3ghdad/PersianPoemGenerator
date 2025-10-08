@@ -1536,7 +1536,6 @@ function AppContent() {
       className="h-screen w-full bg-background relative overflow-hidden app-container"
       style={{ 
         touchAction: 'manipulation', // Optimized touch handling for swipe gestures
-        height: '100vh',
         height: '100dvh', // Use dynamic viewport height for better mobile support
         userSelect: 'none', // Prevent text selection during swipes
         WebkitUserSelect: 'none',
