@@ -408,29 +408,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
             
             // If user signed in with Google and has a profile picture, sync it
             if (session?.user) {
+              // Google profile picture is now handled automatically by ProfileContext
               const avatarUrl = session.user.user_metadata?.avatar_url;
               const providerId = session.user.app_metadata?.provider;
               
               if (providerId === 'google' && avatarUrl) {
-                console.log('Google user detected, syncing profile picture:', avatarUrl);
-                // Store the Google avatar URL in the profile
-                try {
-                  const { projectId, publicAnonKey } = await import('../utils/supabase/info');
-                  await fetch(`https://${projectId}.supabase.co/functions/v1/make-server-c192d0ee/profile`, {
-                    method: 'PUT',
-                    headers: {
-                      'Content-Type': 'application/json',
-                      'Authorization': `Bearer ${session.access_token}`,
-                    },
-                    body: JSON.stringify({
-                      avatarUrl: avatarUrl,
-                      name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || session.user.email?.split('@')[0],
-                    }),
-                  });
-                  console.log('✓ Google profile picture synced successfully');
-                } catch (error) {
-                  console.warn('Failed to sync Google profile picture:', error);
-                }
+                console.log('Google user detected with profile picture:', avatarUrl);
               }
             }
             break;
