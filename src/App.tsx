@@ -816,29 +816,25 @@ function AppContent() {
       }
 
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+      const timeoutId = setTimeout(() => controller.abort(), 12000); // 12 second timeout
       
-      const prompt = `Translate this Persian poem to English while preserving its poetic beauty, meter, and meaning. Keep the same line structure:
+      // Optimized shorter prompt for faster translation
+      const prompt = `Translate to English (preserve poetic form):
 
 ${poem.text}
 
 Title: ${poem.title}
 Poet: ${poem.poet.name}
 
-Please provide:
-1. A translation that maintains the artistic and literary quality of the original Persian poetry
-2. The English translation of the poem title "${poem.title}"
-3. The English name/transliteration of the poet "${poem.poet.name}"
-
-Format your response as:
+Format:
 POEM:
-[translated poem text]
+[translation]
 
 TITLE:
 [English title]
 
 POET:
-[English name of poet]`;
+[English name]`;
 
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
@@ -851,15 +847,15 @@ POET:
           messages: [
             {
               role: 'system',
-              content: 'You are an expert translator of Persian poetry to English. Preserve the poetic beauty, rhythm, and meaning while making it accessible to English readers. Maintain the line structure of the original. Also provide English translations for poem titles and English names/transliterations for Persian poets (e.g., حافظ = Hafez, مولانا = Rumi, سعدی = Saadi, فردوسی = Ferdowsi, نظامی = Nezami, عمر خیام = Omar Khayyam). For titles, translate them appropriately (e.g., غزل = Ghazal, رباعی = Quatrain, مثنوی = Masnavi).'
+              content: 'Translate Persian poetry to English. Preserve poetic form. Poet names: حافظ=Hafez, مولانا=Rumi, سعدی=Saadi, فردوسی=Ferdowsi, نظامی=Nezami, عمر خیام=Omar Khayyam. Titles: غزل=Ghazal, رباعی=Quatrain, مثنوی=Masnavi.'
             },
             {
               role: 'user',
               content: prompt
             }
           ],
-          max_tokens: 800,
-          temperature: 0.7
+          max_tokens: 500,
+          temperature: 0.6
         }),
         signal: controller.signal
       });
@@ -983,6 +979,14 @@ POET:
           setPersianPoemsCache(apiPoems); // Cache for language switching
           setUsingMockData(false);
           setLoading(false);
+          
+          // Pre-translate in background for instant language switching
+          setTimeout(() => {
+            console.log('🔄 Pre-translating poems in background for instant switch...');
+            apiPoems.forEach(poem => {
+              translatePoem(poem).catch(() => null);
+            });
+          }, 3000);
         } else {
           // Retry once if failed
           console.log('Retrying Persian poem fetch...');
@@ -993,6 +997,14 @@ POET:
             setPersianPoemsCache(retryPoems); // Cache for language switching
             setUsingMockData(false);
             setLoading(false);
+            
+            // Pre-translate in background
+            setTimeout(() => {
+              console.log('🔄 Pre-translating retry poems in background...');
+              retryPoems.forEach(poem => {
+                translatePoem(poem).catch(() => null);
+              });
+            }, 3000);
           } else {
             console.error('Failed to load Persian poems from API after retry');
             setLoading(false);
@@ -1072,37 +1084,46 @@ POET:
         ]);
         
         if (persianPoems.length > 0) {
-          console.log(`Fetched ${persianPoems.length} Persian poems, starting parallel translation...`);
+          console.log(`Fetched ${persianPoems.length} Persian poems, starting progressive translation...`);
           
           // Cache Persian poems for language switching
           setPersianPoemsCache(persianPoems);
           
-          // Translate poems in parallel for much faster loading
-          const translationPromises = persianPoems.map(poem => 
-            Promise.race([
-              translatePoem(poem),
-              new Promise<Poem | null>((resolve) => 
-                setTimeout(() => {
-                  console.log(`Translation timeout for poem ${poem.id}`);
-                  resolve(null);
-                }, 15000)
-              )
-            ]).catch(error => {
-              console.warn('Translation failed for poem:', poem.id, String(error));
-              return null;
-            })
-          );
+          // Progressive loading: show poems as they translate (batches of 2)
+          const allTranslated: Poem[] = [...cachedPoems];
+          let firstBatchShown = false;
           
-          // Wait for all translations to complete
-          const results = await Promise.all(translationPromises);
-          const translatedPoems = results.filter((p): p is Poem => p !== null);
+          for (let i = 0; i < persianPoems.length; i += 2) {
+            const batch = persianPoems.slice(i, i + 2);
+            const batchPromises = batch.map(poem => 
+              Promise.race([
+                translatePoem(poem),
+                new Promise<Poem | null>((resolve) => 
+                  setTimeout(() => resolve(null), 15000)
+                )
+              ]).catch(() => null)
+            );
+            
+            const batchResults = await Promise.all(batchPromises);
+            const batchPoems = batchResults.filter((p): p is Poem => p !== null);
+            
+            allTranslated.push(...batchPoems);
+            
+            // Show first batch immediately for instant feedback
+            if (!firstBatchShown && allTranslated.length > 0) {
+              console.log(`✓ Showing first ${allTranslated.length} poems`);
+              setPoems([...allTranslated]);
+              setUsingMockData(false);
+              setLoading(false);
+              firstBatchShown = true;
+            } else if (batchPoems.length > 0) {
+              console.log(`✓ Added ${batchPoems.length} more (${allTranslated.length} total)`);
+              setPoems([...allTranslated]);
+            }
+          }
           
-          if (translatedPoems.length > 0) {
-            console.log(`✓ Successfully translated ${translatedPoems.length} new poems to English`);
-            const allPoems = [...cachedPoems, ...translatedPoems].slice(0, 8);
-            setPoems(allPoems);
-            setUsingMockData(false);
-            setLoading(false);
+          if (allTranslated.length > 0) {
+            console.log(`✓ Completed loading ${allTranslated.length} poems`);
             
             // Preload more poems in the background
             setTimeout(() => {
@@ -1512,28 +1533,48 @@ POET:
     // If we have cached Persian poems, reuse them for instant language switch
     if (persianPoemsCache.length > 0) {
       console.log(`✓ Reusing ${persianPoemsCache.length} cached poems for language switch`);
-      setLoading(true);
       
       if (newLanguage === 'en') {
         // Switching to English - translate the cached Persian poems
-        console.log('Translating cached Persian poems to English...');
-        const translationPromises = persianPoemsCache.map(poem => 
-          translatePoem(poem).catch(() => null)
-        );
-        const results = await Promise.all(translationPromises);
-        const translatedPoems = results.filter((p): p is Poem => p !== null);
+        console.log('Translating cached Persian poems to English with progressive loading...');
         
-        if (translatedPoems.length > 0) {
-          console.log(`✓ Instantly switched to English with ${translatedPoems.length} poems`);
-          setPoems(translatedPoems);
+        // Show loading immediately
+        setLoading(true);
+        
+        // Translate and show poems progressively as they complete
+        const translatedPoems: Poem[] = [];
+        let firstBatchLoaded = false;
+        
+        // Translate in batches of 3 for faster perceived loading
+        for (let i = 0; i < persianPoemsCache.length; i += 3) {
+          const batch = persianPoemsCache.slice(i, i + 3);
+          const batchPromises = batch.map(poem => translatePoem(poem).catch(() => null));
+          const batchResults = await Promise.all(batchPromises);
+          const batchPoems = batchResults.filter((p): p is Poem => p !== null);
+          
+          translatedPoems.push(...batchPoems);
+          
+          // Show first batch immediately (instant feedback!)
+          if (!firstBatchLoaded && translatedPoems.length > 0) {
+            console.log(`✓ Showing first ${translatedPoems.length} poems immediately`);
+            setPoems([...translatedPoems]);
+            setLoading(false);
+            firstBatchLoaded = true;
+          } else if (translatedPoems.length > 0) {
+            // Update with more poems as they load
+            console.log(`✓ Added ${batchPoems.length} more poems (${translatedPoems.length} total)`);
+            setPoems([...translatedPoems]);
+          }
         }
+        
+        console.log(`✓ Completed switch to English with ${translatedPoems.length} poems`);
       } else {
-        // Switching to Farsi - show the original Persian poems
+        // Switching to Farsi - show the original Persian poems instantly
         console.log('Showing original Persian poems');
         setPoems(persianPoemsCache);
+        setLoading(false);
       }
       
-      setLoading(false);
       return;
     }
     
