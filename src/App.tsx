@@ -1182,9 +1182,13 @@ function AppContent() {
     setFavoritesSheetOpen(true);
   };
 
-  // Handle more button click
+  // Handle more button click - require auth to view explanation
   const handleMoreOpen = () => {
-    setMoreSheetOpen(true);
+    if (user) {
+      setMoreSheetOpen(true);
+    } else {
+      setAuthSheetOpen(true);
+    }
   };
 
   // Handle mute toggle
