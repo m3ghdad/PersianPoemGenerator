@@ -284,6 +284,8 @@ function AppContent() {
   const [poems, setPoems] = useState<Poem[]>([]);
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
+  // Store original Persian poems to maintain consistency across language switches
+  const [persianPoemsCache, setPersianPoemsCache] = useState<Poem[]>([]);
   const [usedPoemIds, setUsedPoemIds] = useState<Set<number>>(new Set());
   const [usingMockData, setUsingMockData] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -964,9 +966,9 @@ POET:
       if (langToUse === 'fa') {
         console.log('Loading Persian poems from API...');
         
-        // Fetch Persian poems from API
+        // Fetch Persian poems from API (reduced to 8 for consistency)
         const apiPoems = await Promise.race([
-          fetchRandomPoems(15),
+          fetchRandomPoems(8),
           new Promise<Poem[]>((resolve) => 
             setTimeout(() => {
               console.log('Initial load timeout');
@@ -978,15 +980,17 @@ POET:
         if (apiPoems.length > 0) {
           console.log(`✓ Loaded ${apiPoems.length} Persian poems from API`);
           setPoems(apiPoems);
+          setPersianPoemsCache(apiPoems); // Cache for language switching
           setUsingMockData(false);
           setLoading(false);
         } else {
           // Retry once if failed
           console.log('Retrying Persian poem fetch...');
-          const retryPoems = await fetchRandomPoems(10);
+          const retryPoems = await fetchRandomPoems(8);
           if (retryPoems.length > 0) {
             console.log(`✓ Loaded ${retryPoems.length} Persian poems on retry`);
             setPoems(retryPoems);
+            setPersianPoemsCache(retryPoems); // Cache for language switching
             setUsingMockData(false);
             setLoading(false);
           } else {
@@ -1020,6 +1024,23 @@ POET:
           setUsingMockData(false);
           setLoading(false);
           
+          // Try to load the original Persian poems from cache if available
+          // This helps with language switching
+          if (persianPoemsCache.length === 0) {
+            // Load Persian originals in background
+            setTimeout(async () => {
+              try {
+                const persianPoems = await fetchRandomPoems(8);
+                if (persianPoems.length > 0) {
+                  setPersianPoemsCache(persianPoems);
+                  console.log('✓ Cached Persian poems for language switching');
+                }
+              } catch (e) {
+                console.warn('Failed to cache Persian poems:', e);
+              }
+            }, 2000);
+          }
+          
           // Continue loading more in background
           setTimeout(() => {
             console.log('🔄 Loading additional poems in background...');
@@ -1052,6 +1073,9 @@ POET:
         
         if (persianPoems.length > 0) {
           console.log(`Fetched ${persianPoems.length} Persian poems, starting parallel translation...`);
+          
+          // Cache Persian poems for language switching
+          setPersianPoemsCache(persianPoems);
           
           // Translate poems in parallel for much faster loading
           const translationPromises = persianPoems.map(poem => 
@@ -1482,8 +1506,39 @@ POET:
     // Clear explanations cache for new language
     setExplanationCache(new Map());
     
-    // Reset state for both language changes
+    // Reset current index but keep poems
     setCurrentIndex(0);
+    
+    // If we have cached Persian poems, reuse them for instant language switch
+    if (persianPoemsCache.length > 0) {
+      console.log(`✓ Reusing ${persianPoemsCache.length} cached poems for language switch`);
+      setLoading(true);
+      
+      if (newLanguage === 'en') {
+        // Switching to English - translate the cached Persian poems
+        console.log('Translating cached Persian poems to English...');
+        const translationPromises = persianPoemsCache.map(poem => 
+          translatePoem(poem).catch(() => null)
+        );
+        const results = await Promise.all(translationPromises);
+        const translatedPoems = results.filter((p): p is Poem => p !== null);
+        
+        if (translatedPoems.length > 0) {
+          console.log(`✓ Instantly switched to English with ${translatedPoems.length} poems`);
+          setPoems(translatedPoems);
+        }
+      } else {
+        // Switching to Farsi - show the original Persian poems
+        console.log('Showing original Persian poems');
+        setPoems(persianPoemsCache);
+      }
+      
+      setLoading(false);
+      return;
+    }
+    
+    // No cache - reset and load fresh poems
+    console.log('No cached poems - loading fresh content');
     setUsedPoemIds(new Set());
     setPoems([]);
     setUsingMockData(false);
@@ -1493,10 +1548,10 @@ POET:
     setApiFailureCount(0);
     setLastApiFailureTime(0);
     
-    // Load poems for the new language - pass it explicitly
+    // Load poems for the new language
     setTimeout(() => {
       loadInitialPoems(newLanguage);
-    }, 100); // Small delay to ensure state is updated
+    }, 100);
   };
 
   // Load saved language preference from server if user is logged in
