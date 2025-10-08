@@ -895,7 +895,6 @@ POET:
       };
 
       // Cache the translation for instant loading next time
-      const cacheKey = `translated_poem_${poem.id}`;
       try {
         localStorage.setItem(cacheKey, JSON.stringify(translatedPoem));
         console.log(`✓ Translation cached for poem ${poem.id}`);
