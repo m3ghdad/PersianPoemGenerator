@@ -5,6 +5,7 @@
   "devCommand": "npm run dev",
   "installCommand": "npm install",
   "routes": [
+    { "handle": "filesystem" },
     {
       "src": "/assets/(.*)",
       "headers": {
