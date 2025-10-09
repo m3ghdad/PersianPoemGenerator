@@ -146,20 +146,43 @@ export function DelightfulLoader({ language, message, progress = 0 }: Delightful
 
       {/* Main content */}
       <div className="relative z-10 w-full max-w-2xl px-6 flex flex-col items-center space-y-8">
-        {/* Loading image with fade-in */}
+        {/* Loading image with animations */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8 }}
-          className="w-64 h-64 md:w-80 md:h-80 relative"
+          initial={{ opacity: 0, scale: 0.8, y: 20 }}
+          animate={{ 
+            opacity: 1, 
+            scale: 1,
+            y: 0,
+          }}
+          transition={{ 
+            duration: 1,
+            ease: "easeOut"
+          }}
+          className="w-72 h-72 md:w-96 md:h-96 relative"
         >
-          <img 
-            src="/loading-poet.svg" 
+          <motion.img 
+            src="/loading-poet.png" 
             alt="Loading" 
             className="w-full h-full object-contain drop-shadow-2xl"
+            animate={{
+              y: [0, -10, 0],
+              rotate: [-2, 2, -2]
+            }}
+            transition={{
+              y: {
+                duration: 3,
+                repeat: Infinity,
+                ease: "easeInOut"
+              },
+              rotate: {
+                duration: 4,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }
+            }}
             onError={(e) => {
-              // Fallback if image not found
-              e.currentTarget.style.display = 'none';
+              // Fallback to SVG if PNG not found
+              e.currentTarget.src = '/loading-poet.svg';
             }}
           />
         </motion.div>
