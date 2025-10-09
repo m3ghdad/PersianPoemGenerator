@@ -1869,14 +1869,14 @@ POET:
     >
       {/* Enhanced swipe feedback overlay */}
 
-      {/* Debug info overlay - remove in production */}
-      {isDragging && (
+      {/* Debug info overlay - removed for production */}
+      {/* {isDragging && (
         <div className="absolute top-20 right-4 z-50 bg-black/50 text-white text-xs p-2 rounded pointer-events-none">
           <div>Current: {currentIndex + 1}/{poems.length}</div>
           <div>Direction: {swipeDirection || 'none'}</div>
           <div>Dragging: {isDragging ? 'yes' : 'no'}</div>
         </div>
-      )}
+      )} */}
 
       {/* Video Playlist Background */}
       <VideoPlaylist ref={videoPlaylistRef} isMuted={isMuted} />
