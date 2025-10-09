@@ -1,6 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Music, Music2, Music3, Music4 } from 'lucide-react';
 import { MoonLoader } from 'react-spinners';
 import { toFarsiNumber } from '../utils/numberUtils';
 
@@ -137,46 +136,54 @@ export function DelightfulLoader({ language, message, progress = 0 }: Delightful
     return () => clearInterval(typeInterval);
   }, [currentPoem, language]);
 
-  // Generate random positions for musical notes
-  const generateMusicNotes = () => {
-    return Array.from({ length: 12 }, (_, i) => ({
+  // Extract words from the current poem for floating animation
+  const floatingWords = useMemo(() => {
+    const poem = loadingPoems[currentPoem];
+    const text = language === 'fa' ? poem.fa : poem.en;
+    const words = text.replace(/\n/g, ' ').split(' ').filter(word => word.trim().length > 0);
+    
+    // Take up to 12 words and give them random positions/timing
+    return words.slice(0, 12).map((word, i) => ({
       id: i,
-      Icon: [Music, Music2, Music3, Music4][i % 4],
+      text: word,
       x: Math.random() * 100,
       delay: Math.random() * 5,
-      duration: 8 + Math.random() * 4,
+      duration: 10 + Math.random() * 5,
     }));
-  };
-
-  const [musicNotes] = useState(generateMusicNotes);
+  }, [currentPoem, language]);
 
   return (
     <div className="fixed inset-0 bg-background flex flex-col items-center justify-center overflow-hidden">
-      {/* Floating musical notes background */}
+      {/* Floating poem words background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {musicNotes.map((note) => (
+        {floatingWords.map((word) => (
           <motion.div
-            key={note.id}
-            className="absolute text-foreground/10"
+            key={word.id}
+            className={`absolute text-foreground/15 ${
+              language === 'fa' 
+                ? 'font-[\'Noto_Nastaliq_Urdu\',_serif] text-xl md:text-2xl' 
+                : 'font-[\'Inter\',_sans-serif] text-lg md:text-xl'
+            }`}
             initial={{ 
               y: '100vh', 
-              x: `${note.x}vw`,
+              x: `${word.x}vw`,
               rotate: 0,
               opacity: 0
             }}
             animate={{ 
               y: '-20vh', 
-              rotate: 360,
-              opacity: [0, 0.3, 0.3, 0]
+              rotate: language === 'fa' ? [-10, 10, -10] : [-5, 5, -5],
+              opacity: [0, 0.25, 0.25, 0]
             }}
             transition={{
-              duration: note.duration,
-              delay: note.delay,
+              duration: word.duration,
+              delay: word.delay,
               repeat: Infinity,
               ease: 'linear'
             }}
+            dir={language === 'fa' ? 'rtl' : 'ltr'}
           >
-            <note.Icon size={24 + Math.random() * 16} />
+            {word.text}
           </motion.div>
         ))}
       </div>
@@ -229,7 +236,7 @@ export function DelightfulLoader({ language, message, progress = 0 }: Delightful
           >
             <div 
               className={`text-lg md:text-xl font-medium text-foreground/90 whitespace-pre-line leading-loose text-center ${
-                isRTL ? 'font-[\'Vazirmatn\',_sans-serif]' : 'font-[\'Inter\',_sans-serif]'
+                isRTL ? 'font-[\'Noto_Nastaliq_Urdu\',_serif]' : 'font-[\'Inter\',_sans-serif]'
               }`}
               dir={isRTL ? 'rtl' : 'ltr'}
               style={{ lineHeight: '1.8' }}
