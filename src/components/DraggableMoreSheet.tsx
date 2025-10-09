@@ -686,23 +686,6 @@ export function DraggableMoreSheet({
                                     lineHeight: '1.8'
                                   }}
                                   dir={isRTL ? "rtl" : "ltr"}
-                                  dangerouslySetInnerHTML={{
-                                    __html: explanationData.mainThemes
-                                      .replace(/\*\*(.*?)\*\*/g, '<strong style="color: var(--foreground); font-weight: 600;">$1</strong>')
-                                      .replace(/\*(.*?)\*/g, '<em style="color: var(--muted-foreground); font-style: italic;">$1</em>')
-                                      .replace(/\n\n/g, `</p><p style="margin: 0.75rem 0; text-align: ${isRTL ? 'right' : 'left'}; direction: ${isRTL ? 'rtl' : 'ltr'};">`)
-                                      .replace(/\n/g, '<br/>')
-                                      .replace(/^(.*)$/, `<p style="margin: 0.75rem 0; text-align: ${isRTL ? 'right' : 'left'}; direction: ${isRTL ? 'rtl' : 'ltr'};">$1</p>`)
-                                  }}
-                                />
-                              ) : explanationData.mainThemes ? (
-                                <div 
-                                  className={`text-foreground leading-relaxed ${isRTL ? 'text-right' : 'text-left'} prose prose-sm max-w-none`}
-                                  style={{
-                                    fontFamily: isRTL ? 'system-ui, -apple-system, sans-serif' : 'Georgia, "Times New Roman", serif',
-                                    lineHeight: '1.8'
-                                  }}
-                                  dir={isRTL ? "rtl" : "ltr"}
                                 >
                                   <p>{explanationData.mainThemes}</p>
                                 </div>
