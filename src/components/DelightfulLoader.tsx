@@ -87,6 +87,28 @@ export function DelightfulLoader({ language, message, progress = 0 }: Delightful
   const [currentPoem, setCurrentPoem] = useState(() => Math.floor(Math.random() * loadingPoems.length));
   const [displayedText, setDisplayedText] = useState('');
   const [isRTL] = useState(language === 'fa');
+  const [displayedProgress, setDisplayedProgress] = useState(0);
+  
+  // Smooth counting animation for progress
+  useEffect(() => {
+    const targetProgress = progress || 0;
+    const increment = targetProgress > displayedProgress ? 1 : -1;
+    
+    if (displayedProgress !== targetProgress) {
+      const timer = setTimeout(() => {
+        setDisplayedProgress(prev => {
+          const next = prev + increment;
+          if (increment > 0) {
+            return Math.min(next, targetProgress);
+          } else {
+            return Math.max(next, targetProgress);
+          }
+        });
+      }, 20); // Update every 20ms for smooth animation
+      
+      return () => clearTimeout(timer);
+    }
+  }, [progress, displayedProgress]);
   
   // Rotate through poems every 8 seconds
   useEffect(() => {
@@ -178,21 +200,18 @@ export function DelightfulLoader({ language, message, progress = 0 }: Delightful
             />
             
             {/* Percentage below spinner */}
-            {progress > 0 && (
-              <motion.div
-                className="text-foreground font-bold text-4xl md:text-5xl"
-                animate={{
-                  opacity: [0.6, 1, 0.6]
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-              >
-                {Math.round(progress)}%
-              </motion.div>
-            )}
+            <motion.div
+              className="text-foreground font-bold text-4xl md:text-5xl"
+              initial={{ opacity: 0 }}
+              animate={{
+                opacity: [0.6, 1, 0.6]
+              }}
+              transition={{
+                opacity: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+              }}
+            >
+              {displayedProgress}%
+            </motion.div>
           </div>
         </motion.div>
 
