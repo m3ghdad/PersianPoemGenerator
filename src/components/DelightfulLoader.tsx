@@ -62,6 +62,25 @@ const loadingPoems: LoadingPoem[] = [
   }
 ];
 
+// Tafsir/interpretation loading poems
+const tafsirPoems: LoadingPoem[] = [
+  {
+    fa: "تفسیر شعر، کشف معنای نهان است\nکه در هر بیت، گنجی از جهان است",
+    en: "Poetry interpretation reveals hidden meaning\nIn every verse, a treasure lies unseen.",
+    poet: "رباطار"
+  },
+  {
+    fa: "در واژه‌ها نهفته رمز و راز است\nتفسیر، کلید این در بی‌نیاز است",
+    en: "Within the words, mysteries reside\nInterpretation is the key, our guide.",
+    poet: "رباطار"
+  },
+  {
+    fa: "شعر از ظاهر فراتر معنی دارد\nتفسیر، دل به سوی آن روی می‌آورد",
+    en: "Poetry holds meaning beyond the surface\nInterpretation turns the heart towards its purpose.",
+    poet: "رباطار"
+  }
+];
+
 // English poet names
 const poetNamesEn: Record<string, string> = {
   "سعدی": "Saadi",
@@ -73,18 +92,23 @@ const poetNamesEn: Record<string, string> = {
   "خیام": "Khayyam",
   "نظامی": "Nezami",
   "سنایی": "Sanai",
-  "بیدل دهلوی": "Bidel Dehlavi"
+  "بیدل دهلوی": "Bidel Dehlavi",
+  "رباطار": "Rubatar"
 };
 
 interface DelightfulLoaderProps {
   language: 'fa' | 'en';
   message?: string;
   progress?: number;
+  mode?: 'default' | 'tafsir'; // Support different loading contexts
 }
 
-export function DelightfulLoader({ language, message, progress = 0 }: DelightfulLoaderProps) {
+export function DelightfulLoader({ language, message, progress = 0, mode = 'default' }: DelightfulLoaderProps) {
+  // Select poem set based on mode
+  const poemSet = mode === 'tafsir' ? tafsirPoems : loadingPoems;
+  
   // Start with a random poem on each load
-  const [currentPoem, setCurrentPoem] = useState(() => Math.floor(Math.random() * loadingPoems.length));
+  const [currentPoem, setCurrentPoem] = useState(() => Math.floor(Math.random() * poemSet.length));
   const [displayedText, setDisplayedText] = useState('');
   const [isRTL] = useState(language === 'fa');
   const [displayedProgress, setDisplayedProgress] = useState(0);
@@ -111,16 +135,16 @@ export function DelightfulLoader({ language, message, progress = 0 }: Delightful
   // Rotate through poems every 8 seconds
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentPoem(prev => (prev + 1) % loadingPoems.length);
+      setCurrentPoem(prev => (prev + 1) % poemSet.length);
       setDisplayedText(''); // Reset for new poem
     }, 8000);
     
     return () => clearInterval(interval);
-  }, []);
+  }, [poemSet.length]);
 
   // Typewriter effect
   useEffect(() => {
-    const poem = loadingPoems[currentPoem];
+    const poem = poemSet[currentPoem];
     const text = language === 'fa' ? poem.fa : poem.en;
     let currentIndex = 0;
     
@@ -194,7 +218,7 @@ export function DelightfulLoader({ language, message, progress = 0 }: Delightful
               {displayedText.split('\n').map((line, i) => (
                 <div key={i} className="mb-2">
                   {line}
-                  {i === displayedText.split('\n').length - 1 && line.length < (language === 'fa' ? loadingPoems[currentPoem].fa : loadingPoems[currentPoem].en).length && (
+                  {i === displayedText.split('\n').length - 1 && line.length < (language === 'fa' ? poemSet[currentPoem].fa : poemSet[currentPoem].en).length && (
                     <motion.span
                       animate={{ opacity: [1, 0, 1] }}
                       transition={{ duration: 0.8, repeat: Infinity }}
@@ -212,8 +236,8 @@ export function DelightfulLoader({ language, message, progress = 0 }: Delightful
               className="text-sm text-muted-foreground"
             >
               {language === 'fa' 
-                ? loadingPoems[currentPoem].poet 
-                : poetNamesEn[loadingPoems[currentPoem].poet] || loadingPoems[currentPoem].poet
+                ? poemSet[currentPoem].poet 
+                : poetNamesEn[poemSet[currentPoem].poet] || poemSet[currentPoem].poet
               }
             </motion.p>
           </motion.div>
