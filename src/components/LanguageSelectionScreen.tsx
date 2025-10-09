@@ -123,17 +123,11 @@ export function LanguageSelectionScreen({ onLanguageSelect }: LanguageSelectionS
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="flex flex-col items-center gap-3"
+          className="flex flex-col items-center"
         >
-          <h1 className="text-[30px] text-foreground font-['Noto_Nastaliq_Urdu',_serif] text-center" dir="rtl">
+          <h1 className="text-[48px] text-foreground font-['Noto_Nastaliq_Urdu',_serif] text-center" dir="rtl">
             رباعی وتار
           </h1>
-          <p className="text-[18px] text-muted-foreground text-center" dir="auto">
-            می‌توانید این را هر زمان تغییر دهید
-          </p>
-          <p className="text-[18px] text-muted-foreground text-center">
-            You can change this anytime
-          </p>
         </motion.div>
 
         {/* Welcome poem - no container */}
@@ -177,7 +171,7 @@ export function LanguageSelectionScreen({ onLanguageSelect }: LanguageSelectionS
           </motion.p>
         </motion.div>
 
-        {/* Language buttons using shadcn/ui Button */}
+        {/* Language buttons using shadcn/ui Button (default variant) */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -186,7 +180,6 @@ export function LanguageSelectionScreen({ onLanguageSelect }: LanguageSelectionS
         >
           <Button
             onClick={() => onLanguageSelect('fa')}
-            variant="outline"
             size="lg"
             className="w-full h-[60px] text-[20px] font-medium"
           >
@@ -195,12 +188,26 @@ export function LanguageSelectionScreen({ onLanguageSelect }: LanguageSelectionS
 
           <Button
             onClick={() => onLanguageSelect('en')}
-            variant="outline"
             size="lg"
             className="w-full h-[60px] text-[20px] font-medium"
           >
             English
           </Button>
+        </motion.div>
+
+        {/* Subtitle below buttons */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.8 }}
+          className="flex flex-col items-center gap-1"
+        >
+          <p className="text-[12px] text-muted-foreground text-center" dir="auto">
+            می‌توانید این را هر زمان تغییر دهید
+          </p>
+          <p className="text-[12px] text-muted-foreground text-center">
+            You can change this anytime
+          </p>
         </motion.div>
       </div>
     </div>
