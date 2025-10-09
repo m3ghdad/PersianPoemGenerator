@@ -158,18 +158,6 @@ export function LanguageSelectionScreen({ onLanguageSelect }: LanguageSelectionS
               </div>
             ))}
           </div>
-          
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1 }}
-            className="text-sm text-muted-foreground mt-4"
-          >
-            {showFarsi 
-              ? welcomePoems[currentPoem].poet 
-              : poetNamesEn[welcomePoems[currentPoem].poet] || welcomePoems[currentPoem].poet
-            }
-          </motion.p>
         </motion.div>
 
         {/* Language buttons using shadcn/ui Button (default variant) */}
