@@ -631,7 +631,9 @@ export function DraggableMoreSheet({
                                 />
                               </div>
                             </div>
-                          ) : activeExplanationTab === 'general' && explanationData.generalMeaning ? (
+                          ) : null}
+
+                          {!loadingExplanation && activeExplanationTab === 'general' && explanationData.generalMeaning && (
                             <div 
                               className={`text-foreground leading-relaxed ${isRTL ? 'text-right' : 'text-left'} prose prose-sm max-w-none`}
                               style={{
@@ -650,7 +652,7 @@ export function DraggableMoreSheet({
                             />
                           )}
 
-                          {activeExplanationTab === 'themes' && (
+                          {!loadingExplanation && activeExplanationTab === 'themes' && (
                             <div className="space-y-4">
                               {/* Use comprehensive tafsir themes if available, fallback to simple mainThemes */}
                               {explanationData.fullTafsir?.themes && explanationData.fullTafsir.themes.length > 0 ? (
@@ -697,7 +699,7 @@ export function DraggableMoreSheet({
                             </div>
                           )}
 
-                          {activeExplanationTab === 'imagery' && (
+                          {!loadingExplanation && activeExplanationTab === 'imagery' && (
                             <div className="space-y-4">
                               {/* Use comprehensive tafsir symbols if available, fallback to simple imagerySymbols */}
                               {explanationData.fullTafsir?.symbols && explanationData.fullTafsir.symbols.length > 0 ? (
@@ -760,7 +762,7 @@ export function DraggableMoreSheet({
                           )}
 
                           {/* Literary Devices Tab - only shown if comprehensive tafsir is available */}
-                          {activeExplanationTab === 'devices' && explanationData.fullTafsir?.devices && (
+                          {!loadingExplanation && activeExplanationTab === 'devices' && explanationData.fullTafsir?.devices && (
                             <div className="space-y-4">
                               {explanationData.fullTafsir.devices.map((device, index) => (
                                 <div key={index} className={`${isRTL ? 'border-r-2 pr-4' : 'border-l-2 pl-4'} border-muted`}>
@@ -929,7 +931,7 @@ export function DraggableMoreSheet({
                             </div>
                           )}
 
-                          {activeExplanationTab === 'lineByLine' && (
+                          {!loadingExplanation && activeExplanationTab === 'lineByLine' && (
                             <div className="space-y-4">
                               {/* Use comprehensive tafsir per_beyt if available, fallback to simple lineByLine */}
                               {explanationData.fullTafsir?.per_beyt ? (
