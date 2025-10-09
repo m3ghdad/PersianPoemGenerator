@@ -207,17 +207,24 @@ export function DelightfulLoader({ language, message, progress = 0 }: Delightful
             className="text-center space-y-4 min-h-[140px] flex flex-col items-center justify-center"
           >
             <div 
-              className={`text-lg md:text-xl font-medium text-foreground/90 whitespace-pre-line leading-relaxed ${
+              className={`text-lg md:text-xl font-medium text-foreground/90 whitespace-pre-line leading-loose text-center ${
                 isRTL ? 'font-[\'Vazirmatn\',_sans-serif]' : 'font-[\'Inter\',_sans-serif]'
               }`}
               dir={isRTL ? 'rtl' : 'ltr'}
+              style={{ lineHeight: '1.8' }}
             >
-              {displayedText}
-              <motion.span
-                animate={{ opacity: [1, 0, 1] }}
-                transition={{ duration: 0.8, repeat: Infinity }}
-                className="inline-block w-0.5 h-5 bg-foreground/60 ml-1"
-              />
+              {displayedText.split('\n').map((line, i) => (
+                <div key={i} className="mb-2">
+                  {line}
+                  {i === displayedText.split('\n').length - 1 && line.length < (language === 'fa' ? loadingPoems[currentPoem].fa : loadingPoems[currentPoem].en).length && (
+                    <motion.span
+                      animate={{ opacity: [1, 0, 1] }}
+                      transition={{ duration: 0.8, repeat: Infinity }}
+                      className="inline-block w-0.5 h-5 bg-foreground/60 ml-1"
+                    />
+                  )}
+                </div>
+              ))}
             </div>
             
             <motion.p 
