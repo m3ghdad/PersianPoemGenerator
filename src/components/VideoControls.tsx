@@ -10,7 +10,7 @@ interface VideoControlsProps {
 export function VideoControls({ onNext, onPrevious }: VideoControlsProps) {
   const [feedbackText, setFeedbackText] = useState<string>('');
   const [showFeedback, setShowFeedback] = useState(false);
-  const { isRTL, t } = useLanguage();
+  const { isRTL, language } = useLanguage();
 
   useEffect(() => {
     if (showFeedback) {
@@ -25,14 +25,14 @@ export function VideoControls({ onNext, onPrevious }: VideoControlsProps) {
 
   const handleLeftClick = () => {
     console.log('Left button (next) clicked');
-    setFeedbackText('ویدیو بعدی');
+    setFeedbackText(language === 'fa' ? 'آهنگ بعدی' : 'Next song');
     setShowFeedback(true);
     onNext();
   };
 
   const handleRightClick = () => {
     console.log('Right button (previous) clicked');
-    setFeedbackText('ویدیو قبلی');
+    setFeedbackText(language === 'fa' ? 'آهنگ قبلی' : 'Previous song');
     setShowFeedback(true);
     onPrevious();
   };
@@ -85,7 +85,7 @@ export function VideoControls({ onNext, onPrevious }: VideoControlsProps) {
       {showFeedback && (
         <div 
           className="fixed bottom-16 left-1/2 transform -translate-x-1/2 z-40 text-white text-sm text-center bg-black/50 backdrop-blur-sm rounded-lg px-3 py-1 shadow-lg transition-opacity duration-300"
-          dir="rtl"
+          dir={language === 'fa' ? 'rtl' : 'ltr'}
           style={{
             textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)'
           }}
