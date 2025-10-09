@@ -557,9 +557,9 @@ function AppContent() {
       });
       
       return {
-        generalMeaning: `این شعر زیبا دربردارنده موضوعات ${themeText} است و با استفاده از تصاویر و استعاره‌های ظریف، پیام عمیق و معنادار خود را به مخاطب منتقل می‌کند.`,
-        mainThemes: `موضوعات اصلی: ${themeText}`,
-        imagerySymbols: `شاعر از تصاویر و نمادهای کلاسیک شعر فارسی استفاده کرده است که لایه‌های معنایی عمیق‌تری به شعر می‌بخشند.`,
+        generalMeaning: `${poem.poet?.name || 'شاعر'} در این اثر ارزشمند، با استادی تمام و بهره‌گیری از سنت غنی شعر کلاسیک فارسی، به بررسی و تحلیل ${themeText} می‌پردازد. این شعر نمونه‌ای از عمق اندیشه و ظرافت بیان است که با استفاده از تصاویر چندلایه، استعاره‌های نمادین، و صناعات ادبی برجسته، مخاطب را به سفری معنوی و فکری دعوت می‌کند. واژگان منتخب و ترکیب‌بندی هنرمندانه ابیات، نشان از تسلط کامل شاعر بر زبان و قواعد شعر دارد. این اثر در زمره آثار ماندگار ادبیات فارسی قرار می‌گیرد که همچنان پس از گذشت سالیان، قادر به تأثیرگذاری بر مخاطب معاصر است.`,
+        mainThemes: `محورهای اصلی و مضامین برجسته این شعر عبارتند از: ${themeText}. این موضوعات نه تنها در سطح ظاهری کلام قابل مشاهده‌اند، بلکه در عمق معنایی و لایه‌های باطنی شعر نیز حضور دارند. شاعر با خلق ارتباطی پیچیده میان این مفاهیم، شبکه‌ای از معانی مرتبط را می‌سازد که نیازمند تأمل و دقت در خوانش است. هر یک از این مضامین بازتابی از تجربیات عمیق انسانی و حکمت کهن فرهنگ ایرانی به شمار می‌آیند.`,
+        imagerySymbols: `نمادپردازی و تصویرآفرینی در این شعر از ویژگی‌های بارز آن است. شاعر از مجموعه‌ای گسترده از نمادهای کلاسیک و معاصر شعر فارسی بهره می‌برد که هر کدام حامل معانی چندگانه و قابل تفسیر در سطوح مختلف هستند. این تصاویر شاعرانه نه تنها جنبه زیبایی‌شناختی دارند، بلکه ابزاری برای انتقال مفاهیم فلسفی، عرفانی، و اجتماعی به حساب می‌آیند. رابطه پیچیده میان ظاهر و باطن این نمادها، عمق و غنای معنایی شعر را چند برابر می‌کند و امکان تفسیرهای متنوع را فراهم می‌سازد.`,
         lineByLine
       };
     } else {
@@ -603,9 +603,9 @@ function AppContent() {
       });
       
       return {
-        generalMeaning: `This beautiful poem encompasses themes of ${themeText}, using delicate imagery and metaphors to convey its profound message following the rich tradition of Persian poetry.`,
-        mainThemes: `Main themes: ${themeText}`,
-        imagerySymbols: `The poet uses classical Persian metaphors and symbols, creating layers of meaning that enhance the poem's literary significance.`,
+        generalMeaning: `In this masterful work, ${poem.poet?.name || 'the poet'} demonstrates exceptional command of classical Persian poetic traditions while exploring themes of ${themeText}. This poem exemplifies the depth of thought and elegance of expression characteristic of Persian literature, employing multi-layered imagery, symbolic metaphors, and sophisticated literary devices to invite the reader on both a spiritual and intellectual journey. The carefully chosen vocabulary and artistic verse composition reflect the poet's complete mastery of language and poetic conventions. This work stands among the enduring masterpieces of Persian literature, continuing to resonate with contemporary audiences across centuries.`,
+        mainThemes: `The principal themes and prominent motifs of this poem include: ${themeText}. These subjects are present not only at the surface level of the text but also in deeper semantic and esoteric layers. Through creating complex relationships between these concepts, the poet constructs an interconnected network of meanings that demands careful contemplation and close reading. Each of these themes reflects profound human experiences and ancient wisdom from Persian cultural heritage.`,
+        imagerySymbols: `Symbolism and imagery are prominent features of this poem. The poet draws upon an extensive repertoire of classical and contemporary Persian poetic symbols, each carrying multiple meanings interpretable at various levels. These poetic images serve not only aesthetic purposes but also function as vehicles for conveying philosophical, mystical, and social concepts. The complex relationship between the apparent and hidden dimensions of these symbols multiplies the poem's semantic depth and richness, enabling diverse interpretations.`,
         lineByLine
       };
     }
