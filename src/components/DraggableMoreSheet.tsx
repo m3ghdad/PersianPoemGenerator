@@ -524,11 +524,10 @@ export function DraggableMoreSheet({
                     </div>
                     
                     {loadingExplanation ? (
-                      <div className="fixed inset-0 z-50">
+                      <div className="min-h-[400px] flex items-center justify-center py-12">
                         <DelightfulLoader 
                           language={language}
-                          mode="tafsir"
-                          message={language === 'fa' ? 'در حال تولید تفسیر عمیق...' : 'Generating deep analysis...'}
+                          message={language === 'fa' ? 'در حال تولید تفسیر...' : 'Generating interpretation...'}
                           progress={50}
                         />
                       </div>
