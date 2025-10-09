@@ -130,12 +130,13 @@ export function LanguageSelectionScreen({ onLanguageSelect }: LanguageSelectionS
           </h1>
         </motion.div>
 
-        {/* Welcome poem - no container */}
+        {/* Welcome poem - fixed height to prevent layout shift */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="w-full min-h-[140px] flex flex-col items-center justify-center"
+          className="w-full flex flex-col items-center justify-center"
+          style={{ height: '160px' }}
         >
           <div 
             className="text-lg md:text-xl font-medium text-foreground/80 whitespace-pre-line text-center leading-loose"
