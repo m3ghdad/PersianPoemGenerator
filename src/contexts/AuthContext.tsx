@@ -455,10 +455,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       console.log('📍 Current URL:', window.location.href);
       console.log('🏠 Hostname:', window.location.hostname);
       
-      // Use rubatar.com in production, localhost for development
-      const baseUrl = window.location.hostname === 'localhost' 
-        ? window.location.origin 
-        : 'https://rubatar.com';
+      // Use current URL for redirect (supports both www.rubatar.com and rubatar.com)
+      const baseUrl = window.location.origin;
       
       console.log('🔄 Redirect URL:', baseUrl);
       
