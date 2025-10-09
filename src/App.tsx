@@ -11,6 +11,7 @@ import { DraggableFavoritesSheet } from './components/DraggableFavoritesSheet';
 import { DraggableMoreSheet } from './components/DraggableMoreSheet';
 import { VideoPlaylist, VideoPlaylistRef } from './components/VideoPlaylist';
 import { VideoControls } from './components/VideoControls';
+import { AnimatedHandBackground } from './components/AnimatedHandBackground';
 import AnimatedGroup from './components/AnimatedGroup';
 import { TypewriterText } from './components/TypewriterText';
 import { Toaster } from './components/ui/sonner';
@@ -1878,8 +1879,13 @@ POET:
         </div>
       )} */}
 
-      {/* Video Playlist Background */}
-      <VideoPlaylist ref={videoPlaylistRef} isMuted={isMuted} />
+      {/* Animated Hand Background */}
+      <AnimatedHandBackground />
+      
+      {/* Video Playlist - Audio Only (hidden) */}
+      <div className="hidden">
+        <VideoPlaylist ref={videoPlaylistRef} isMuted={isMuted} />
+      </div>
 
       {/* Render cards - only render visible cards for performance */}
       {poems.slice(Math.max(0, currentIndex - 1), Math.min(poems.length, currentIndex + 2)).map((poem, relativeIndex) => {
