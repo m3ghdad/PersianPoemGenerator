@@ -12,52 +12,52 @@ interface LoadingPoem {
 const loadingPoems: LoadingPoem[] = [
   {
     fa: "صبوری کن که تلخی‌ها گذارد\nکه بعد از هر شبی روزی برآید",
-    en: "Be patient, for bitterness will pass —\nafter every night, a day will rise.",
+    en: "Be patient, for bitterness will pass\nAfter every night, a day will rise.",
     poet: "سعدی"
   },
   {
     fa: "صبوری می‌کنم تا کام دل یابم، ولی دانم\nکه این دریا به خون دل، شدن آسان نمی‌گردد",
-    en: "I am patient till my heart's desire I gain —\nbut I know this sea won't calm without the blood of pain.",
+    en: "I am patient till my heart's desire I gain\nI know this sea won't calm without the blood of pain.",
     poet: "حافظ"
   },
   {
     fa: "صبر کن ای دل که در پایان شب\nصبح امیدت دمَد از آفتاب",
-    en: "Be patient, my heart —\nat the night's end, the sun of hope will rise.",
+    en: "Be patient, my heart\nAt the night's end, the sun of hope will rise.",
     poet: "مولانا"
   },
   {
     fa: "به صبر اندر آری به هر کار دست\nکز آتش، خردمند، آرد شکر ز پست",
-    en: "With patience, you'll master any deed —\nfor even from fire, the wise draw sweetness.",
+    en: "With patience, you'll master any deed\nFor even from fire, the wise draw sweetness.",
     poet: "فردوسی"
   },
   {
     fa: "صبر کن، تا بر تو گردد روزگار\nکز شکیبایی، گل آید زین خار",
-    en: "Be patient till fate turns your way —\nfrom patience, flowers bloom from thorns.",
+    en: "Be patient till fate turns your way\nFrom patience, flowers bloom from thorns.",
     poet: "عطار"
   },
   {
     fa: "دلا صبر کن، کار دنیا گذاره\nغم و شادی و تیمار دنیا گذاره",
-    en: "O heart, be patient, this world will pass —\nits sorrow, its joy, its burden will pass.",
+    en: "O heart, be patient, this world will pass\nIts sorrow, its joy, its burden will pass.",
     poet: "باباطاهر"
   },
   {
     fa: "چون نیست رهی به جاودانی، صبر است\nدر ناملایمات جهانی، صبر است",
-    en: "Since no road leads to eternity, be patient —\nin all this world's hardships, patience is the way.",
+    en: "Since no road leads to eternity, be patient\nIn all this world's hardships, patience is the way.",
     poet: "خیام"
   },
   {
     fa: "هر که صبر آموخت، کام یافت\nهر که شتاب کرد، زیان یافت",
-    en: "He who learned patience, found delight;\nhe who rushed, met loss outright.",
+    en: "He who learned patience, found delight\nHe who rushed, met loss outright.",
     poet: "نظامی"
   },
   {
     fa: "صبوری، کلید گنج مراد است\nکه در بی‌تابی، درِ دل گشاد است",
-    en: "Patience is the key to the treasure of desire —\nfor restlessness only opens the heart to fire.",
+    en: "Patience is the key to the treasure of desire\nFor restlessness only opens the heart to fire.",
     poet: "سنایی"
   },
   {
     fa: "صبری که تلخ نیست، صبر نیست\nشیرینیِ آن، در تلخی‌ست",
-    en: "Patience that isn't bitter isn't patience —\nits sweetness lies in its bitterness.",
+    en: "Patience that isn't bitter isn't patience\nIts sweetness lies in its bitterness.",
     poet: "بیدل دهلوی"
   }
 ];
