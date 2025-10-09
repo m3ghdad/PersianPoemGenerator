@@ -117,7 +117,7 @@ export function LanguageSelectionScreen({ onLanguageSelect }: LanguageSelectionS
   return (
     <div className="h-screen w-full bg-background flex flex-col items-center justify-center px-6">
       {/* Main content container */}
-      <div className="w-full max-w-md flex flex-col items-center space-y-8">
+      <div className="w-full max-w-md flex flex-col items-center" style={{ gap: '16px' }}>
         {/* Title */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -125,7 +125,7 @@ export function LanguageSelectionScreen({ onLanguageSelect }: LanguageSelectionS
           transition={{ duration: 0.6 }}
           className="flex flex-col items-center"
         >
-          <h1 className="text-[48px] text-foreground font-['Noto_Nastaliq_Urdu',_serif] text-center" dir="rtl">
+          <h1 className="text-[48px] text-foreground text-center" dir="rtl" style={{ fontFamily: "'Noto Nastaliq Urdu', serif" }}>
             رباعی وتار
           </h1>
         </motion.div>
@@ -138,11 +138,12 @@ export function LanguageSelectionScreen({ onLanguageSelect }: LanguageSelectionS
           className="w-full min-h-[140px] flex flex-col items-center justify-center"
         >
           <div 
-            className={`text-lg md:text-xl font-medium text-foreground/80 whitespace-pre-line text-center leading-loose ${
-              showFarsi ? 'font-[\'Noto_Nastaliq_Urdu\',_serif]' : 'font-[\'Inter\',_sans-serif]'
-            }`}
+            className="text-lg md:text-xl font-medium text-foreground/80 whitespace-pre-line text-center leading-loose"
             dir={showFarsi ? 'rtl' : 'ltr'}
-            style={{ lineHeight: '1.8' }}
+            style={{ 
+              lineHeight: '1.8',
+              fontFamily: showFarsi ? "'Noto Nastaliq Urdu', serif" : "'Inter', sans-serif"
+            }}
           >
             {displayedText.split('\n').map((line, i) => (
               <div key={i} className="mb-2">
@@ -176,12 +177,13 @@ export function LanguageSelectionScreen({ onLanguageSelect }: LanguageSelectionS
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.6 }}
-          className="w-full flex flex-col gap-4"
+          className="w-full flex flex-col"
+          style={{ gap: '8px' }}
         >
           <Button
             onClick={() => onLanguageSelect('fa')}
             size="lg"
-            className="w-full h-[60px] text-[20px] font-medium"
+            className="w-full text-[20px] font-medium px-4 py-4"
           >
             فارسی
           </Button>
@@ -189,7 +191,7 @@ export function LanguageSelectionScreen({ onLanguageSelect }: LanguageSelectionS
           <Button
             onClick={() => onLanguageSelect('en')}
             size="lg"
-            className="w-full h-[60px] text-[20px] font-medium"
+            className="w-full text-[20px] font-medium px-4 py-4"
           >
             English
           </Button>
