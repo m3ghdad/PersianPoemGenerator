@@ -160,12 +160,12 @@ export function LanguageSelectionScreen({ onLanguageSelect }: LanguageSelectionS
           </div>
         </motion.div>
 
-        {/* Language buttons using shadcn/ui Button (default variant) */}
+        {/* Language buttons using shadcn/ui Button (horizontal) */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.6 }}
-          className="flex flex-col items-center"
+          className="flex flex-row items-center"
           style={{ gap: '8px' }}
         >
           <Button
@@ -179,6 +179,7 @@ export function LanguageSelectionScreen({ onLanguageSelect }: LanguageSelectionS
 
           <Button
             onClick={() => onLanguageSelect('en')}
+            variant="secondary"
             size="lg"
             className="text-[20px] font-medium px-4 py-4"
             style={{ width: '120px' }}
