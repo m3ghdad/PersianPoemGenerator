@@ -15,6 +15,7 @@ import AnimatedGroup from './components/AnimatedGroup';
 import { TypewriterText } from './components/TypewriterText';
 import { Toaster } from './components/ui/sonner';
 import { LanguageSelectionScreen } from './components/LanguageSelectionScreen';
+import { DelightfulLoader } from './components/DelightfulLoader';
 import { useAuth } from './contexts/AuthContext';
 import { useLanguage } from './contexts/LanguageContext';
 import { useTheme } from './contexts/ThemeContext';
@@ -284,6 +285,8 @@ function AppContent() {
   const [poems, setPoems] = useState<Poem[]>([]);
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [loadingMessage, setLoadingMessage] = useState('');
   // Store original Persian poems to maintain consistency across language switches
   const [persianPoemsCache, setPersianPoemsCache] = useState<Poem[]>([]);
   const [usedPoemIds, setUsedPoemIds] = useState<Set<number>>(new Set());
@@ -814,7 +817,7 @@ function AppContent() {
         console.warn('OpenAI API key not configured');
         return null;
       }
-
+      
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 12000); // 12 second timeout
       
@@ -869,7 +872,7 @@ POET:
 
       const result = await response.json();
       const translation = result.choices[0]?.message?.content?.trim();
-
+      
       if (!translation) {
         console.warn('OpenAI returned no translation');
         return null;
@@ -955,12 +958,15 @@ POET:
   // Load initial poems with conservative approach
   const loadInitialPoems = async (targetLanguage?: Language) => {
     setLoading(true);
+    setLoadingProgress(0);
+    setLoadingMessage(targetLanguage === 'fa' ? 'بارگذاری اشعار...' : 'Loading poems...');
     const langToUse = targetLanguage || language;
     console.log('Loading initial poems for language:', langToUse);
     
     try {
       if (langToUse === 'fa') {
         console.log('Loading Persian poems from API...');
+        setLoadingProgress(20);
         
         // Fetch Persian poems from API (reduced to 8 for consistency)
         const apiPoems = await Promise.race([
@@ -975,10 +981,12 @@ POET:
         
         if (apiPoems.length > 0) {
           console.log(`✓ Loaded ${apiPoems.length} Persian poems from API`);
+          setLoadingProgress(90);
           setPoems(apiPoems);
           setPersianPoemsCache(apiPoems); // Cache for language switching
           setUsingMockData(false);
-          setLoading(false);
+          setLoadingProgress(100);
+          setTimeout(() => setLoading(false), 300);
           
           // Pre-translate in background for instant language switching
           setTimeout(() => {
@@ -1013,6 +1021,8 @@ POET:
       } else {
         // English mode: Load from cache first for instant 2-3s loading
         console.log('Loading English poems - checking cache...');
+        setLoadingProgress(10);
+        setLoadingMessage(langToUse === 'fa' ? 'جستجوی ترجمه‌ها...' : 'Checking translations...');
         
         // Get cached translations
         const cachedPoems: Poem[] = [];
@@ -1031,10 +1041,13 @@ POET:
         if (cachedPoems.length >= 8) {
           // We have enough cached poems - show them instantly!
           console.log(`✓ Loading ${cachedPoems.length} cached poems instantly`);
+          setLoadingProgress(80);
+          setLoadingMessage(langToUse === 'fa' ? 'آماده‌سازی نمایش...' : 'Preparing display...');
           const poemsToShow = cachedPoems.slice(0, 8);
           setPoems(poemsToShow);
           setUsingMockData(false);
-          setLoading(false);
+          setLoadingProgress(100);
+          setTimeout(() => setLoading(false), 300);
           
           // Try to load the original Persian poems from cache if available
           // This helps with language switching
@@ -1063,6 +1076,8 @@ POET:
         
         // Not enough cached - fetch and translate
         console.log(`Only ${cachedPoems.length} cached poems, fetching more...`);
+        setLoadingProgress(30);
+        setLoadingMessage(langToUse === 'fa' ? 'دریافت اشعار جدید...' : 'Fetching new poems...');
         
         // Show cached poems immediately while loading more
         if (cachedPoems.length > 0) {
@@ -1073,6 +1088,7 @@ POET:
         
         // Fetch poems to translate
         const neededCount = Math.max(8 - cachedPoems.length, 5);
+        setLoadingProgress(40);
         const persianPoems = await Promise.race([
           fetchRandomPoems(neededCount),
           new Promise<Poem[]>((resolve) => 
@@ -1085,6 +1101,8 @@ POET:
         
         if (persianPoems.length > 0) {
           console.log(`Fetched ${persianPoems.length} Persian poems, starting progressive translation...`);
+          setLoadingProgress(50);
+          setLoadingMessage(langToUse === 'fa' ? 'ترجمه اشعار...' : 'Translating poems...');
           
           // Cache Persian poems for language switching
           setPersianPoemsCache(persianPoems);
@@ -1092,6 +1110,7 @@ POET:
           // Progressive loading: show poems as they translate (batches of 2)
           const allTranslated: Poem[] = [...cachedPoems];
           let firstBatchShown = false;
+          const totalToTranslate = persianPoems.length;
           
           for (let i = 0; i < persianPoems.length; i += 2) {
             const batch = persianPoems.slice(i, i + 2);
@@ -1108,6 +1127,10 @@ POET:
             const batchPoems = batchResults.filter((p): p is Poem => p !== null);
             
             allTranslated.push(...batchPoems);
+            
+            // Update progress
+            const progressPercent = 50 + ((i + 2) / totalToTranslate) * 40;
+            setLoadingProgress(Math.min(progressPercent, 90));
             
             // Show first batch immediately for instant feedback
             if (!firstBatchShown && allTranslated.length > 0) {
@@ -1165,21 +1188,21 @@ POET:
     try {
       if (language === 'fa') {
         // Persian mode - fetch from API
-        console.log('Fetching more Persian poems from API...');
-        
-        const apiPoems = await Promise.race([
+          console.log('Fetching more Persian poems from API...');
+          
+          const apiPoems = await Promise.race([
           fetchRandomPoems(10), // Batch size for loading more
-          new Promise<Poem[]>((resolve) => 
-            setTimeout(() => {
+            new Promise<Poem[]>((resolve) => 
+              setTimeout(() => {
               console.log('Load more timeout');
-              resolve([]);
-            }, 15000) // 15 second timeout for additional loads
-          )
-        ]);
-        
-        if (apiPoems.length > 0) {
+                resolve([]);
+              }, 15000) // 15 second timeout for additional loads
+            )
+          ]);
+          
+          if (apiPoems.length > 0) {
           console.log(`✓ Loaded ${apiPoems.length} more Persian poems from API`);
-          setPoems(prev => [...prev, ...apiPoems]);
+            setPoems(prev => [...prev, ...apiPoems]);
         } else {
           console.error('Failed to load more Persian poems');
           setHasMore(false);
@@ -1187,39 +1210,39 @@ POET:
       } else {
         // English mode - fetch Persian poems and translate them
         console.log('Fetching and translating more Persian poems to English...');
-        
-        const persianPoems = await Promise.race([
+          
+          const persianPoems = await Promise.race([
           fetchRandomPoems(5),
-          new Promise<Poem[]>((resolve) => 
-            setTimeout(() => {
+            new Promise<Poem[]>((resolve) => 
+              setTimeout(() => {
               console.log('Persian fetch timeout for translation');
-              resolve([]);
+                resolve([]);
             }, 10000)
-          )
-        ]);
-        
-        if (persianPoems.length > 0) {
+            )
+          ]);
+          
+          if (persianPoems.length > 0) {
           console.log(`Translating ${persianPoems.length} Persian poems to English in parallel...`);
           
           // Translate poems in parallel for faster loading
           const translationPromises = persianPoems.map(poem => 
             Promise.race([
-              translatePoem(poem),
-              new Promise<Poem | null>((resolve) => 
+                  translatePoem(poem),
+                  new Promise<Poem | null>((resolve) => 
                 setTimeout(() => resolve(null), 15000)
               )
             ]).catch(error => {
-              console.warn('Translation failed for poem:', poem.id, error);
+                console.warn('Translation failed for poem:', poem.id, error);
               return null;
             })
           );
           
           const results = await Promise.all(translationPromises);
           const translatedPoems = results.filter((p): p is Poem => p !== null);
-          
-          if (translatedPoems.length > 0) {
+            
+            if (translatedPoems.length > 0) {
             console.log(`✓ Successfully translated ${translatedPoems.length} more poems to English in parallel`);
-            setPoems(prev => [...prev, ...translatedPoems]);
+              setPoems(prev => [...prev, ...translatedPoems]);
           } else {
             console.error('Failed to translate any poems');
             setHasMore(false);
@@ -1403,7 +1426,7 @@ POET:
   // Handle more button click - require auth to view explanation
   const handleMoreOpen = () => {
     if (user) {
-      setMoreSheetOpen(true);
+    setMoreSheetOpen(true);
     } else {
       setAuthSheetOpen(true);
     }
@@ -1540,10 +1563,13 @@ POET:
         
         // Show loading immediately
         setLoading(true);
+        setLoadingProgress(10);
+        setLoadingMessage(newLanguage === 'fa' ? 'ترجمه اشعار...' : 'Translating poems...');
         
         // Translate and show poems progressively as they complete
         const translatedPoems: Poem[] = [];
         let firstBatchLoaded = false;
+        const totalPoems = persianPoemsCache.length;
         
         // Translate in batches of 3 for faster perceived loading
         for (let i = 0; i < persianPoemsCache.length; i += 3) {
@@ -1554,10 +1580,15 @@ POET:
           
           translatedPoems.push(...batchPoems);
           
+          // Update progress
+          const progressPercent = 10 + ((i + 3) / totalPoems) * 80;
+          setLoadingProgress(Math.min(progressPercent, 90));
+          
           // Show first batch immediately (instant feedback!)
           if (!firstBatchLoaded && translatedPoems.length > 0) {
             console.log(`✓ Showing first ${translatedPoems.length} poems immediately`);
             setPoems([...translatedPoems]);
+            setLoadingProgress(100);
             setLoading(false);
             firstBatchLoaded = true;
           } else if (translatedPoems.length > 0) {
@@ -1710,7 +1741,7 @@ POET:
         await loadInitialPoems(language);
       } catch (error) {
         console.error('Error in loadData:', error);
-        setLoading(false);
+          setLoading(false);
       }
     };
     
@@ -1786,12 +1817,7 @@ POET:
   // Show loading screen while checking for saved language preference
   if (isLoadingPreference) {
     console.log('Showing loading screen - isLoadingPreference:', isLoadingPreference);
-    return (
-      <div className="h-screen bg-background flex flex-col items-center justify-center">
-        <div className="w-16 h-16 border-4 border-foreground/20 border-t-foreground rounded-full animate-spin mb-6"></div>
-        <div className="text-foreground text-xl md:text-2xl animate-pulse">Loading...</div>
-      </div>
-    );
+    return <DelightfulLoader language={language} message={language === 'fa' ? 'بارگذاری تنظیمات...' : 'Loading preferences...'} />;
   }
 
   // Show language selection screen if user hasn't selected a language yet
@@ -1806,12 +1832,7 @@ POET:
   console.log('App ready - Language:', language, 'hasSelectedLanguage:', hasSelectedLanguage, 'Poems count:', poems.length);
 
   if (loading) {
-    return (
-      <div className="h-screen bg-background flex flex-col items-center justify-center">
-        <div className="w-16 h-16 border-4 border-foreground/20 border-t-foreground rounded-full animate-spin mb-6"></div>
-        <div className="text-foreground text-xl md:text-2xl animate-pulse" dir={isRTL ? "rtl" : "ltr"}>{t.loading}</div>
-      </div>
-    );
+    return <DelightfulLoader language={language} message={loadingMessage} progress={loadingProgress} />;
   }
 
   return (
