@@ -1023,12 +1023,6 @@ export function DraggableMoreSheet({
                           {/* Content is always generated - no empty states */}
                         </div>
                       </>
-                    ) : (
-                      <div className="bg-muted/30 rounded-lg p-4">
-                        <div className="text-center py-8 text-muted-foreground">
-                          {t.noExplanationGenerated || 'تفسیری تولید نشده است'}
-                        </div>
-                      </div>
                     )}
                   </div>
 
