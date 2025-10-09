@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MoonLoader } from 'react-spinners';
 import { toFarsiNumber } from '../utils/numberUtils';
@@ -136,58 +136,8 @@ export function DelightfulLoader({ language, message, progress = 0 }: Delightful
     return () => clearInterval(typeInterval);
   }, [currentPoem, language]);
 
-  // Extract words from the current poem for floating animation
-  const floatingWords = useMemo(() => {
-    const poem = loadingPoems[currentPoem];
-    const text = language === 'fa' ? poem.fa : poem.en;
-    const words = text.replace(/\n/g, ' ').split(' ').filter(word => word.trim().length > 0);
-    
-    // Take up to 12 words and give them random positions/timing
-    return words.slice(0, 12).map((word, i) => ({
-      id: i,
-      text: word,
-      x: Math.random() * 100,
-      delay: Math.random() * 5,
-      duration: 10 + Math.random() * 5,
-    }));
-  }, [currentPoem, language]);
-
   return (
     <div className="fixed inset-0 bg-background flex flex-col items-center justify-center overflow-hidden">
-      {/* Floating poem words background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {floatingWords.map((word) => (
-          <motion.div
-            key={word.id}
-            className={`absolute text-foreground/15 ${
-              language === 'fa' 
-                ? 'font-[\'Noto_Nastaliq_Urdu\',_serif] text-xl md:text-2xl' 
-                : 'font-[\'Inter\',_sans-serif] text-lg md:text-xl'
-            }`}
-            initial={{ 
-              y: '100vh', 
-              x: `${word.x}vw`,
-              rotate: 0,
-              opacity: 0
-            }}
-            animate={{ 
-              y: '-20vh', 
-              rotate: language === 'fa' ? [-10, 10, -10] : [-5, 5, -5],
-              opacity: [0, 0.25, 0.25, 0]
-            }}
-            transition={{
-              duration: word.duration,
-              delay: word.delay,
-              repeat: Infinity,
-              ease: 'linear'
-            }}
-            dir={language === 'fa' ? 'rtl' : 'ltr'}
-          >
-            {word.text}
-          </motion.div>
-        ))}
-      </div>
-
       {/* Main content */}
       <div className="relative z-10 w-full max-w-2xl px-6 flex flex-col items-center justify-center space-y-8">
         {/* Spinner with percentage */}
