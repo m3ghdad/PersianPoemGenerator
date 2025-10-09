@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Music, Music2, Music3, Music4 } from 'lucide-react';
-import { BounceLoader } from 'react-spinners';
+import { MoonLoader } from 'react-spinners';
 
 interface LoadingPoem {
   fa: string;
@@ -155,10 +155,10 @@ export function DelightfulLoader({ language, message, progress = 0 }: Delightful
           className="relative flex flex-col items-center gap-4"
         >
           <div className="relative flex flex-col items-center gap-6">
-            <BounceLoader
+            <MoonLoader
               color="#ffffff"
               loading={true}
-              size={80}
+              size={48}
               speedMultiplier={1}
             />
             
