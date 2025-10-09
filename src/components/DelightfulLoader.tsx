@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Music, Music2, Music3, Music4 } from 'lucide-react';
 import { MoonLoader } from 'react-spinners';
 import { toFarsiNumber } from '../utils/numberUtils';
 
@@ -137,50 +136,8 @@ export function DelightfulLoader({ language, message, progress = 0 }: Delightful
     return () => clearInterval(typeInterval);
   }, [currentPoem, language]);
 
-  // Generate random positions for musical notes
-  const generateMusicNotes = () => {
-    return Array.from({ length: 12 }, (_, i) => ({
-      id: i,
-      Icon: [Music, Music2, Music3, Music4][i % 4],
-      x: Math.random() * 100,
-      delay: Math.random() * 5,
-      duration: 8 + Math.random() * 4,
-    }));
-  };
-
-  const [musicNotes] = useState(generateMusicNotes);
-
   return (
     <div className="fixed inset-0 bg-background flex flex-col items-center justify-center overflow-hidden">
-      {/* Floating musical notes background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {musicNotes.map((note) => (
-          <motion.div
-            key={note.id}
-            className="absolute text-foreground/10"
-            initial={{ 
-              y: '100vh', 
-              x: `${note.x}vw`,
-              rotate: 0,
-              opacity: 0
-            }}
-            animate={{ 
-              y: '-20vh', 
-              rotate: 360,
-              opacity: [0, 0.3, 0.3, 0]
-            }}
-            transition={{
-              duration: note.duration,
-              delay: note.delay,
-              repeat: Infinity,
-              ease: 'linear'
-            }}
-          >
-            <note.Icon size={24 + Math.random() * 16} />
-          </motion.div>
-        ))}
-      </div>
-
       {/* Main content */}
       <div className="relative z-10 w-full max-w-2xl px-6 flex flex-col items-center justify-center space-y-8">
         {/* Spinner with percentage */}
@@ -229,7 +186,7 @@ export function DelightfulLoader({ language, message, progress = 0 }: Delightful
           >
             <div 
               className={`text-lg md:text-xl font-medium text-foreground/90 whitespace-pre-line leading-loose text-center ${
-                isRTL ? 'font-[\'Vazirmatn\',_sans-serif]' : 'font-[\'Inter\',_sans-serif]'
+                isRTL ? 'font-[\'Noto_Nastaliq_Urdu\',_serif]' : 'font-[\'Inter\',_sans-serif]'
               }`}
               dir={isRTL ? 'rtl' : 'ltr'}
               style={{ lineHeight: '1.8' }}
