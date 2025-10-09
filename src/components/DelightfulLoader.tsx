@@ -13,54 +13,68 @@ const loadingPoems: LoadingPoem[] = [
   {
     fa: "صبوری کن که تلخی‌ها گذارد\nکه بعد از هر شبی روزی برآید",
     en: "Be patient, for bitterness will pass —\nafter every night, a day will rise.",
-    poet: "سعدی • Saadi"
+    poet: "سعدی"
   },
   {
     fa: "صبوری می‌کنم تا کام دل یابم، ولی دانم\nکه این دریا به خون دل، شدن آسان نمی‌گردد",
     en: "I am patient till my heart's desire I gain —\nbut I know this sea won't calm without the blood of pain.",
-    poet: "حافظ • Hafez"
+    poet: "حافظ"
   },
   {
     fa: "صبر کن ای دل که در پایان شب\nصبح امیدت دمَد از آفتاب",
     en: "Be patient, my heart —\nat the night's end, the sun of hope will rise.",
-    poet: "مولانا • Rumi"
+    poet: "مولانا"
   },
   {
     fa: "به صبر اندر آری به هر کار دست\nکز آتش، خردمند، آرد شکر ز پست",
     en: "With patience, you'll master any deed —\nfor even from fire, the wise draw sweetness.",
-    poet: "فردوسی • Ferdowsi"
+    poet: "فردوسی"
   },
   {
     fa: "صبر کن، تا بر تو گردد روزگار\nکز شکیبایی، گل آید زین خار",
     en: "Be patient till fate turns your way —\nfrom patience, flowers bloom from thorns.",
-    poet: "عطار • Attar"
+    poet: "عطار"
   },
   {
     fa: "دلا صبر کن، کار دنیا گذاره\nغم و شادی و تیمار دنیا گذاره",
     en: "O heart, be patient, this world will pass —\nits sorrow, its joy, its burden will pass.",
-    poet: "باباطاهر • Baba Taher"
+    poet: "باباطاهر"
   },
   {
     fa: "چون نیست رهی به جاودانی، صبر است\nدر ناملایمات جهانی، صبر است",
     en: "Since no road leads to eternity, be patient —\nin all this world's hardships, patience is the way.",
-    poet: "خیام • Khayyam"
+    poet: "خیام"
   },
   {
     fa: "هر که صبر آموخت، کام یافت\nهر که شتاب کرد، زیان یافت",
     en: "He who learned patience, found delight;\nhe who rushed, met loss outright.",
-    poet: "نظامی • Nezami"
+    poet: "نظامی"
   },
   {
     fa: "صبوری، کلید گنج مراد است\nکه در بی‌تابی، درِ دل گشاد است",
     en: "Patience is the key to the treasure of desire —\nfor restlessness only opens the heart to fire.",
-    poet: "سنایی • Sanai"
+    poet: "سنایی"
   },
   {
     fa: "صبری که تلخ نیست، صبر نیست\nشیرینیِ آن، در تلخی‌ست",
     en: "Patience that isn't bitter isn't patience —\nits sweetness lies in its bitterness.",
-    poet: "بیدل دهلوی • Bidel Dehlavi"
+    poet: "بیدل دهلوی"
   }
 ];
+
+// English poet names
+const poetNamesEn: Record<string, string> = {
+  "سعدی": "Saadi",
+  "حافظ": "Hafez",
+  "مولانا": "Rumi",
+  "فردوسی": "Ferdowsi",
+  "عطار": "Attar",
+  "باباطاهر": "Baba Taher",
+  "خیام": "Khayyam",
+  "نظامی": "Nezami",
+  "سنایی": "Sanai",
+  "بیدل دهلوی": "Bidel Dehlavi"
+};
 
 interface DelightfulLoaderProps {
   language: 'fa' | 'en';
@@ -69,7 +83,8 @@ interface DelightfulLoaderProps {
 }
 
 export function DelightfulLoader({ language, message, progress = 0 }: DelightfulLoaderProps) {
-  const [currentPoem, setCurrentPoem] = useState(0);
+  // Start with a random poem on each load
+  const [currentPoem, setCurrentPoem] = useState(() => Math.floor(Math.random() * loadingPoems.length));
   const [displayedText, setDisplayedText] = useState('');
   const [isRTL] = useState(language === 'fa');
   
@@ -211,7 +226,10 @@ export function DelightfulLoader({ language, message, progress = 0 }: Delightful
               transition={{ delay: 0.5 }}
               className="text-sm text-muted-foreground"
             >
-              {loadingPoems[currentPoem].poet}
+              {language === 'fa' 
+                ? loadingPoems[currentPoem].poet 
+                : poetNamesEn[loadingPoems[currentPoem].poet] || loadingPoems[currentPoem].poet
+              }
             </motion.p>
           </motion.div>
         </AnimatePresence>
