@@ -145,84 +145,31 @@ export function DelightfulLoader({ language, message, progress = 0 }: Delightful
       </div>
 
       {/* Main content */}
-      <div className="relative z-10 w-full max-w-2xl px-6 flex flex-col items-center space-y-8">
-        {/* Morphing shape with tar instrument and percentage */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8 }}
-          className="relative w-64 h-64 md:w-80 md:h-80 flex items-center justify-center"
-        >
-          {/* Morphing background shape */}
-          <svg 
-            width="100%" 
-            height="100%" 
-            viewBox="0 0 200 200" 
-            className="absolute inset-0"
+      <div className="relative z-10 w-full max-w-2xl px-6 flex flex-col items-center justify-center space-y-8">
+        {/* Percentage display */}
+        {progress > 0 && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ 
+              opacity: 1, 
+              scale: 1,
+            }}
+            className="text-foreground font-bold text-5xl md:text-6xl mb-4"
           >
-            <defs>
-              <linearGradient id="shapeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="currentColor" stopOpacity="0.15" />
-                <stop offset="100%" stopColor="currentColor" stopOpacity="0.05" />
-              </linearGradient>
-            </defs>
-            
-            {/* Morphing shape that transitions between oval, square, tall rectangle */}
-            <motion.path
-              d="M 100 50 Q 150 50, 150 100 Q 150 150, 100 150 Q 50 150, 50 100 Q 50 50, 100 50 Z"
-              fill="url(#shapeGradient)"
-              stroke="currentColor"
-              strokeWidth="3"
-              strokeOpacity="0.3"
+            <motion.span
               animate={{
-                d: [
-                  // Oval (horizontal)
-                  "M 100 70 Q 160 70, 160 100 Q 160 130, 100 130 Q 40 130, 40 100 Q 40 70, 100 70 Z",
-                  // Square
-                  "M 50 50 L 150 50 L 150 150 L 50 150 Z",
-                  // Tall Rectangle (vertical)
-                  "M 70 30 L 130 30 L 130 170 L 70 170 Z",
-                  // Back to Oval
-                  "M 100 70 Q 160 70, 160 100 Q 160 130, 100 130 Q 40 130, 40 100 Q 40 70, 100 70 Z",
-                ]
+                opacity: [0.5, 1, 0.5]
               }}
               transition={{
-                duration: 8,
+                duration: 2,
                 repeat: Infinity,
                 ease: "easeInOut"
               }}
-            />
-          </svg>
-          
-          {/* Static tar instrument image */}
-          <div className="relative z-10 w-24 h-24 md:w-32 md:h-32">
-            <img 
-              src="/tar-instrument.svg" 
-              alt="Tar instrument" 
-              className="w-full h-full object-contain"
-              style={{ 
-                filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.15))',
-                opacity: 0.8
-              }}
-            />
-          </div>
-          
-          {/* Percentage text below instrument */}
-          <motion.div
-            className="absolute bottom-8 text-foreground font-bold text-3xl md:text-4xl"
-            animate={{
-              scale: [1, 1.05, 1],
-              opacity: [0.7, 1, 0.7]
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          >
-            {progress > 0 ? `${Math.round(progress)}%` : ''}
+            >
+              {Math.round(progress)}%
+            </motion.span>
           </motion.div>
-        </motion.div>
+        )}
 
         {/* Poem text with typewriter effect */}
         <AnimatePresence mode="wait">
