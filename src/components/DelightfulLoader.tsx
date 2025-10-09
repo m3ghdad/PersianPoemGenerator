@@ -146,45 +146,82 @@ export function DelightfulLoader({ language, message, progress = 0 }: Delightful
 
       {/* Main content */}
       <div className="relative z-10 w-full max-w-2xl px-6 flex flex-col items-center space-y-8">
-        {/* Loading image with animations */}
+        {/* Morphing shape with tar instrument and percentage */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.8, y: 20 }}
-          animate={{ 
-            opacity: 1, 
-            scale: 1,
-            y: 0,
-          }}
-          transition={{ 
-            duration: 1,
-            ease: "easeOut"
-          }}
-          className="w-72 h-72 md:w-96 md:h-96 relative"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8 }}
+          className="relative w-64 h-64 md:w-80 md:h-80 flex items-center justify-center"
         >
-          <motion.img 
-            src="/loading-poet.png" 
-            alt="Loading" 
-            className="w-full h-full object-contain drop-shadow-2xl"
+          {/* Morphing background shape */}
+          <svg 
+            width="100%" 
+            height="100%" 
+            viewBox="0 0 200 200" 
+            className="absolute inset-0"
+          >
+            <defs>
+              <linearGradient id="shapeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="currentColor" stopOpacity="0.15" />
+                <stop offset="100%" stopColor="currentColor" stopOpacity="0.05" />
+              </linearGradient>
+            </defs>
+            
+            {/* Morphing shape that transitions between oval, square, tall rectangle */}
+            <motion.path
+              d="M 100 50 Q 150 50, 150 100 Q 150 150, 100 150 Q 50 150, 50 100 Q 50 50, 100 50 Z"
+              fill="url(#shapeGradient)"
+              stroke="currentColor"
+              strokeWidth="3"
+              strokeOpacity="0.3"
+              animate={{
+                d: [
+                  // Oval (horizontal)
+                  "M 100 70 Q 160 70, 160 100 Q 160 130, 100 130 Q 40 130, 40 100 Q 40 70, 100 70 Z",
+                  // Square
+                  "M 50 50 L 150 50 L 150 150 L 50 150 Z",
+                  // Tall Rectangle (vertical)
+                  "M 70 30 L 130 30 L 130 170 L 70 170 Z",
+                  // Back to Oval
+                  "M 100 70 Q 160 70, 160 100 Q 160 130, 100 130 Q 40 130, 40 100 Q 40 70, 100 70 Z",
+                ]
+              }}
+              transition={{
+                duration: 8,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            />
+          </svg>
+          
+          {/* Static tar instrument image */}
+          <div className="relative z-10 w-24 h-24 md:w-32 md:h-32">
+            <img 
+              src="/tar-instrument.svg" 
+              alt="Tar instrument" 
+              className="w-full h-full object-contain"
+              style={{ 
+                filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.15))',
+                opacity: 0.8
+              }}
+            />
+          </div>
+          
+          {/* Percentage text below instrument */}
+          <motion.div
+            className="absolute bottom-8 text-foreground font-bold text-3xl md:text-4xl"
             animate={{
-              y: [0, -10, 0],
-              rotate: [-2, 2, -2]
+              scale: [1, 1.05, 1],
+              opacity: [0.7, 1, 0.7]
             }}
             transition={{
-              y: {
-                duration: 3,
-                repeat: Infinity,
-                ease: "easeInOut"
-              },
-              rotate: {
-                duration: 4,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeInOut"
             }}
-            onError={(e) => {
-              // Fallback to SVG if PNG not found
-              e.currentTarget.src = '/loading-poet.svg';
-            }}
-          />
+          >
+            {progress > 0 ? `${Math.round(progress)}%` : ''}
+          </motion.div>
         </motion.div>
 
         {/* Poem text with typewriter effect */}
@@ -227,65 +264,12 @@ export function DelightfulLoader({ language, message, progress = 0 }: Delightful
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-sm text-muted-foreground"
+            className="text-sm text-muted-foreground text-center"
             dir={isRTL ? 'rtl' : 'ltr'}
           >
             {message}
           </motion.p>
         )}
-
-        {/* Progress bar */}
-        <div className="w-full max-w-md space-y-2">
-          <div className="h-2 bg-muted rounded-full overflow-hidden backdrop-blur-xl">
-            <motion.div
-              className="h-full bg-gradient-to-r from-primary/60 via-primary to-primary/60 rounded-full"
-              initial={{ width: '0%' }}
-              animate={{ 
-                width: progress > 0 ? `${progress}%` : '60%',
-                backgroundPosition: ['0% 50%', '100% 50%', '0% 50%']
-              }}
-              transition={{ 
-                width: { duration: 0.5 },
-                backgroundPosition: { duration: 3, repeat: Infinity, ease: 'linear' }
-              }}
-              style={{
-                backgroundSize: '200% 100%'
-              }}
-            />
-          </div>
-          
-          {/* Progress percentage or loading text */}
-          <motion.p
-            animate={{ opacity: [0.5, 1, 0.5] }}
-            transition={{ duration: 2, repeat: Infinity }}
-            className="text-xs text-center text-muted-foreground"
-            dir={isRTL ? 'rtl' : 'ltr'}
-          >
-            {progress > 0 
-              ? `${Math.round(progress)}%` 
-              : (language === 'fa' ? 'در حال بارگذاری...' : 'Loading...')
-            }
-          </motion.p>
-        </div>
-
-        {/* Pulsing dots */}
-        <div className="flex items-center space-x-2">
-          {[0, 1, 2].map((i) => (
-            <motion.div
-              key={i}
-              className="w-2 h-2 bg-primary/60 rounded-full"
-              animate={{ 
-                scale: [1, 1.5, 1],
-                opacity: [0.5, 1, 0.5]
-              }}
-              transition={{
-                duration: 1.5,
-                repeat: Infinity,
-                delay: i * 0.2
-              }}
-            />
-          ))}
-        </div>
       </div>
     </div>
   );
