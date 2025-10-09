@@ -523,31 +523,9 @@ export function DraggableMoreSheet({
 
                     </div>
                     
-                    {loadingExplanation ? (
-                      <div className="min-h-[400px] flex items-center justify-center py-12">
-                        <DelightfulLoader 
-                          language={language}
-                          message={language === 'fa' ? 'در حال تولید تفسیر...' : 'Generating interpretation...'}
-                          progress={50}
-                        />
-                      </div>
-                    ) : explanationError ? (
-                      <div className="bg-muted/30 rounded-lg p-4">
-                        <div className="text-center py-8">
-                          <div className="text-destructive mb-2">
-                            {explanationError}
-                          </div>
-                          <button
-                            onClick={() => handleFetchExplanation(false)}
-                            className="text-primary hover:text-primary/80 text-sm underline"
-                          >
-                            {t.tryAgain || 'Try again'}
-                          </button>
-                        </div>
-                      </div>
-                    ) : Object.keys(explanationData).length > 0 ? (
+                    {/* Explanation Tabs - always visible */}
+                    {(Object.keys(explanationData).length > 0 || loadingExplanation) && (
                       <>
-                        {/* Explanation Tabs - بیت به بیت first as requested */}
                         <div className="flex flex-wrap gap-2 mb-4" dir={isRTL ? "rtl" : "ltr"}>
                           <button
                             onClick={() => setActiveExplanationTab('lineByLine')}
@@ -643,7 +621,17 @@ export function DraggableMoreSheet({
 
                         {/* Explanation Content */}
                         <div className="bg-muted/30 rounded-lg p-4">
-                          {activeExplanationTab === 'general' && explanationData.generalMeaning && (
+                          {loadingExplanation ? (
+                            <div className="min-h-[300px] flex items-center justify-center py-8">
+                              <div className="w-full max-w-md">
+                                <DelightfulLoader 
+                                  language={language}
+                                  message={language === 'fa' ? 'در حال بارگذاری تفسیر...' : 'Loading interpretation...'}
+                                  progress={50}
+                                />
+                              </div>
+                            </div>
+                          ) : activeExplanationTab === 'general' && explanationData.generalMeaning ? (
                             <div 
                               className={`text-foreground leading-relaxed ${isRTL ? 'text-right' : 'text-left'} prose prose-sm max-w-none`}
                               style={{
