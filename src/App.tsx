@@ -1450,11 +1450,15 @@ POET:
 
   // Handle more button click - require auth to view explanation
   const handleMoreOpen = () => {
-    if (user) {
+    // TEMPORARY: Allow access without login for testing
+    // TODO: Re-enable authentication check before production
     setMoreSheetOpen(true);
-    } else {
-      setAuthSheetOpen(true);
-    }
+    
+    // if (user) {
+    //   setMoreSheetOpen(true);
+    // } else {
+    //   setAuthSheetOpen(true);
+    // }
   };
 
   // Handle mute toggle
