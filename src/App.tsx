@@ -817,7 +817,7 @@ function AppContent() {
         console.warn('OpenAI API key not configured');
         return null;
       }
-
+      
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 12000); // 12 second timeout
       
@@ -872,7 +872,7 @@ POET:
 
       const result = await response.json();
       const translation = result.choices[0]?.message?.content?.trim();
-
+      
       if (!translation) {
         console.warn('OpenAI returned no translation');
         return null;
@@ -1022,7 +1022,7 @@ POET:
         // English mode: Load from cache first for instant 2-3s loading
         console.log('Loading English poems - checking cache...');
         setLoadingProgress(10);
-        setLoadingMessage(language === 'fa' ? 'جستجوی ترجمه‌ها...' : 'Checking translations...');
+        setLoadingMessage(langToUse === 'fa' ? 'جستجوی ترجمه‌ها...' : 'Checking translations...');
         
         // Get cached translations
         const cachedPoems: Poem[] = [];
@@ -1042,7 +1042,7 @@ POET:
           // We have enough cached poems - show them instantly!
           console.log(`✓ Loading ${cachedPoems.length} cached poems instantly`);
           setLoadingProgress(80);
-          setLoadingMessage(language === 'fa' ? 'آماده‌سازی نمایش...' : 'Preparing display...');
+          setLoadingMessage(langToUse === 'fa' ? 'آماده‌سازی نمایش...' : 'Preparing display...');
           const poemsToShow = cachedPoems.slice(0, 8);
           setPoems(poemsToShow);
           setUsingMockData(false);
@@ -1077,7 +1077,7 @@ POET:
         // Not enough cached - fetch and translate
         console.log(`Only ${cachedPoems.length} cached poems, fetching more...`);
         setLoadingProgress(30);
-        setLoadingMessage(language === 'fa' ? 'دریافت اشعار جدید...' : 'Fetching new poems...');
+        setLoadingMessage(langToUse === 'fa' ? 'دریافت اشعار جدید...' : 'Fetching new poems...');
         
         // Show cached poems immediately while loading more
         if (cachedPoems.length > 0) {
@@ -1102,7 +1102,7 @@ POET:
         if (persianPoems.length > 0) {
           console.log(`Fetched ${persianPoems.length} Persian poems, starting progressive translation...`);
           setLoadingProgress(50);
-          setLoadingMessage(language === 'fa' ? 'ترجمه اشعار...' : 'Translating poems...');
+          setLoadingMessage(langToUse === 'fa' ? 'ترجمه اشعار...' : 'Translating poems...');
           
           // Cache Persian poems for language switching
           setPersianPoemsCache(persianPoems);
@@ -1188,21 +1188,21 @@ POET:
     try {
       if (language === 'fa') {
         // Persian mode - fetch from API
-        console.log('Fetching more Persian poems from API...');
-        
-        const apiPoems = await Promise.race([
+          console.log('Fetching more Persian poems from API...');
+          
+          const apiPoems = await Promise.race([
           fetchRandomPoems(10), // Batch size for loading more
-          new Promise<Poem[]>((resolve) => 
-            setTimeout(() => {
+            new Promise<Poem[]>((resolve) => 
+              setTimeout(() => {
               console.log('Load more timeout');
-              resolve([]);
-            }, 15000) // 15 second timeout for additional loads
-          )
-        ]);
-        
-        if (apiPoems.length > 0) {
+                resolve([]);
+              }, 15000) // 15 second timeout for additional loads
+            )
+          ]);
+          
+          if (apiPoems.length > 0) {
           console.log(`✓ Loaded ${apiPoems.length} more Persian poems from API`);
-          setPoems(prev => [...prev, ...apiPoems]);
+            setPoems(prev => [...prev, ...apiPoems]);
         } else {
           console.error('Failed to load more Persian poems');
           setHasMore(false);
@@ -1210,39 +1210,39 @@ POET:
       } else {
         // English mode - fetch Persian poems and translate them
         console.log('Fetching and translating more Persian poems to English...');
-        
-        const persianPoems = await Promise.race([
+          
+          const persianPoems = await Promise.race([
           fetchRandomPoems(5),
-          new Promise<Poem[]>((resolve) => 
-            setTimeout(() => {
+            new Promise<Poem[]>((resolve) => 
+              setTimeout(() => {
               console.log('Persian fetch timeout for translation');
-              resolve([]);
+                resolve([]);
             }, 10000)
-          )
-        ]);
-        
-        if (persianPoems.length > 0) {
+            )
+          ]);
+          
+          if (persianPoems.length > 0) {
           console.log(`Translating ${persianPoems.length} Persian poems to English in parallel...`);
           
           // Translate poems in parallel for faster loading
           const translationPromises = persianPoems.map(poem => 
             Promise.race([
-              translatePoem(poem),
-              new Promise<Poem | null>((resolve) => 
+                  translatePoem(poem),
+                  new Promise<Poem | null>((resolve) => 
                 setTimeout(() => resolve(null), 15000)
               )
             ]).catch(error => {
-              console.warn('Translation failed for poem:', poem.id, error);
+                console.warn('Translation failed for poem:', poem.id, error);
               return null;
             })
           );
           
           const results = await Promise.all(translationPromises);
           const translatedPoems = results.filter((p): p is Poem => p !== null);
-          
-          if (translatedPoems.length > 0) {
+            
+            if (translatedPoems.length > 0) {
             console.log(`✓ Successfully translated ${translatedPoems.length} more poems to English in parallel`);
-            setPoems(prev => [...prev, ...translatedPoems]);
+              setPoems(prev => [...prev, ...translatedPoems]);
           } else {
             console.error('Failed to translate any poems');
             setHasMore(false);
@@ -1426,7 +1426,7 @@ POET:
   // Handle more button click - require auth to view explanation
   const handleMoreOpen = () => {
     if (user) {
-      setMoreSheetOpen(true);
+    setMoreSheetOpen(true);
     } else {
       setAuthSheetOpen(true);
     }
@@ -1564,7 +1564,7 @@ POET:
         // Show loading immediately
         setLoading(true);
         setLoadingProgress(10);
-        setLoadingMessage('Translating poems...');
+        setLoadingMessage(newLanguage === 'fa' ? 'ترجمه اشعار...' : 'Translating poems...');
         
         // Translate and show poems progressively as they complete
         const translatedPoems: Poem[] = [];
@@ -1741,7 +1741,7 @@ POET:
         await loadInitialPoems(language);
       } catch (error) {
         console.error('Error in loadData:', error);
-        setLoading(false);
+          setLoading(false);
       }
     };
     
