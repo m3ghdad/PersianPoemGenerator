@@ -1318,7 +1318,6 @@ POET:
     setIsDragging(false);
     setSwipeDirection(null);
     
-    console.log('Touch start:', touch.clientY);
   }, [isAnySheetOpen]);
 
   const handleTouchMove = useCallback((e: TouchEvent) => {
@@ -1337,7 +1336,6 @@ POET:
     if (Math.abs(deltaY) > 30) {
       const newDirection = deltaY > 0 ? 'up' : 'down';
       setSwipeDirection(newDirection);
-      console.log('Swipe direction:', newDirection, 'Delta:', deltaY);
     }
     
     // Prevent scrolling during significant vertical swipes
@@ -1354,7 +1352,6 @@ POET:
     const deltaY = touchStart.y - touch.clientY;
     const deltaTime = Date.now() - touchStart.time;
     
-    console.log('Touch end - deltaY:', deltaY, 'deltaTime:', deltaTime, 'currentIndex:', currentIndex, 'totalPoems:', poems.length);
 
     // More sensitive swipe detection - reduced threshold and increased time limit
     if (Math.abs(deltaY) > 40 && deltaTime < 800) {
@@ -1363,28 +1360,22 @@ POET:
       if (deltaY > 0) {
         // Swiping up - go to next poem
         if (currentIndex < poems.length - 1) {
-          console.log('Navigating to next poem:', currentIndex + 1);
           navigateToPoem(currentIndex + 1);
         } else {
-          console.log('At last poem, loading more...');
         }
         
         // Load more if near end (within 5 poems of the end)
         if (currentIndex >= poems.length - 5 && !loadingMore) {
-          console.log('Near end of poems, loading more...');
           loadMorePoems();
         }
       } else if (deltaY < 0) {
         // Swiping down - go to previous poem
         if (currentIndex > 0) {
-          console.log('Navigating to previous poem:', currentIndex - 1);
           navigateToPoem(currentIndex - 1);
         } else {
-          console.log('At first poem');
         }
       }
     } else {
-      console.log('Swipe not detected - deltaY:', Math.abs(deltaY), 'threshold: 40, deltaTime:', deltaTime, 'limit: 800');
     }
 
     // Reset states
@@ -1877,21 +1868,6 @@ POET:
       }}
     >
       {/* Enhanced swipe feedback overlay */}
-      {swipeDirection && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center pointer-events-none">
-          <div className={`${theme === 'dark' ? 'text-white' : 'text-black'} text-6xl transform transition-all duration-200 ${
-            swipeDirection === 'up' ? 'translate-y-4 opacity-90 scale-110' : '-translate-y-4 opacity-90 scale-110'
-          }`}
-          style={{
-            textShadow: theme === 'dark' 
-              ? '2px 2px 8px rgba(0, 0, 0, 0.8), 0 0 16px rgba(0, 0, 0, 0.6)'
-              : '2px 2px 8px rgba(255, 255, 255, 0.8), 0 0 16px rgba(255, 255, 255, 0.6)',
-            filter: 'drop-shadow(0 0 10px currentColor)'
-          }}>
-            {swipeDirection === 'up' ? '↑' : '↓'}
-          </div>
-        </div>
-      )}
 
       {/* Debug info overlay - remove in production */}
       {isDragging && (

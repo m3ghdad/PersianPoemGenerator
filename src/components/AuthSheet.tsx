@@ -216,7 +216,6 @@ export function AuthSheet({ open, onOpenChange }: AuthSheetProps) {
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log('Mouse down at:', e.clientY);
     handleDragStart(e.clientY);
   }, [handleDragStart]);
 
@@ -240,7 +239,6 @@ export function AuthSheet({ open, onOpenChange }: AuthSheetProps) {
   const handleTouchStartDrag = useCallback((e: React.TouchEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log('Touch start at:', e.touches[0].clientY);
     handleDragStart(e.touches[0].clientY);
   }, [handleDragStart]);
 

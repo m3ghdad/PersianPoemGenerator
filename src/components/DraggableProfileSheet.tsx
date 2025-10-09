@@ -210,7 +210,6 @@ export function DraggableProfileSheet({
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log('Mouse down at:', e.clientY);
     handleDragStart(e.clientY);
   }, [handleDragStart]);
 
@@ -234,7 +233,6 @@ export function DraggableProfileSheet({
   const handleTouchStartDrag = useCallback((e: React.TouchEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log('Touch start at:', e.touches[0].clientY);
     handleDragStart(e.touches[0].clientY);
   }, [handleDragStart]);
 
