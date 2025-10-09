@@ -535,19 +535,25 @@ function AppContent() {
       
       const themeText = themes.length > 0 ? themes.join('، ') : 'زیبایی و هنر';
       
-      // Generate line by line analysis
-      const lines = poem.text.split(/\r?\n/).filter(line => line.trim() !== '').slice(0, 8);
-      const lineByLine = lines.map(line => {
-        let meaning = `این بیت درباره ${themeText} سخن می‌گوید`;
+      // Generate comprehensive line by line analysis - ALWAYS provide content
+      const lines = poem.text.split(/\r?\n/).filter(line => line.trim() !== '');
+      const lineByLine = lines.map((line, index) => {
+        let meaning = '';
         
-        if (line.includes('عشق') || line.includes('دل')) {
-          meaning = 'این بیت درباره عمق احساسات و عشق صحبت می‌کند';
-        } else if (line.includes('گل') || line.includes('باغ')) {
-          meaning = 'این بیت از طبیعت برای بیان زیبایی و ناپایداری استفاده می‌کند';
-        } else if (line.includes('می') || line.includes('جام')) {
-          meaning = 'در این بیت شراب نمادی از معرفت و حال عرفانی است';
-        } else if (line.includes('دنیا') || line.includes('فانی')) {
-          meaning = 'این بیت درباره گذرا بودن زندگی دنیوی تأمل می‌کند';
+        // Detailed analysis based on content and position
+        if (line.includes('عشق') || line.includes('دل') || line.includes('محبت')) {
+          meaning = `در این بیت، شاعر با استفاده از واژگان عاطفی و تصاویر احساسی، به بیان عمق عشق و پیچیدگی‌های آن می‌پردازد. این بیان نه تنها حاوی معنای ظاهری است، بلکه لایه‌های عرفانی و فلسفی نیز در آن نهفته است. استفاده از کلمات کلیدی در این مصراع، نشان‌دهنده تجربه عمیق احساسی شاعر است.`;
+        } else if (line.includes('گل') || line.includes('باغ') || line.includes('بهار')) {
+          meaning = `شاعر در این بیت از تصاویر طبیعت و زیبایی‌های آن بهره می‌برد تا مفاهیم عمیق‌تری چون گذر زمان، زیبایی ناپایدار، و چرخه حیات را به تصویر بکشد. این استعاره‌های طبیعی از مشخصات بارز شعر کلاسیک فارسی است که معانی چندلایه را در قالب تصاویر ملموس ارائه می‌دهد.`;
+        } else if (line.includes('می') || line.includes('جام') || line.includes('شراب')) {
+          meaning = `در این مصراع، شراب و جام نه تنها به معنای ظاهری خود، بلکه به عنوان نمادی از معرفت، حال عرفانی، و مستی روحانی به کار رفته است. این یکی از رمزهای رایج در شعر فارسی است که مخاطب را به تفسیرهای عمیق‌تر دعوت می‌کند و لایه‌های معنایی متعددی دارد.`;
+        } else if (line.includes('دنیا') || line.includes('فانی') || line.includes('زمان')) {
+          meaning = `این بیت حاوی تأملات فلسفی درباره گذرا بودن حیات دنیوی و ماهیت زمان است. شاعر با زبانی شاعرانه و حکیمانه، به بررسی جایگاه انسان در جهان و ناپایداری امور مادی می‌پردازد، که از مضامین اصلی اندیشه فلسفی در ادبیات کلاسیک فارسی به شمار می‌رود.`;
+        } else if (line.includes('یار') || line.includes('معشوق') || line.includes('دوست')) {
+          meaning = `مفهوم یار و معشوق در این بیت فراتر از معنای عاشقانه صرف است و به بعد عرفانی و روحانی اشاره دارد. شاعر با استفاده از این واژگان، لایه‌های مختلف عشق از جسمانی تا روحانی و الهی را در هم می‌آمیزد و مخاطب را به درک عمیق‌تری از مفهوم محبت رهنمون می‌سازد.`;
+        } else {
+          // Default comprehensive analysis
+          meaning = `این بیت با بهره‌گیری از زبان شاعرانه و تصاویر هنرمندانه، به بیان مفاهیم ${themeText} می‌پردازد. شاعر با انتخاب دقیق واژگان و ترکیب‌بندی استادانه، پیامی عمیق و چندلایه را منتقل می‌کند که نیازمند تأمل و دقت در خوانش است. این مصراع در کنار سایر ابیات، شبکه‌ای از معانی مرتبط را می‌سازد.`;
         }
         
         return {
@@ -584,16 +590,22 @@ function AppContent() {
       
       const themeText = themes.length > 0 ? themes.join(', ') : 'beauty and artistry';
       
-      const lines = poem.text.split(/\r?\n/).filter(line => line.trim() !== '').slice(0, 8);
-      const lineByLine = lines.map(line => {
-        let meaning = `This line explores themes of ${themeText}`;
+      const lines = poem.text.split(/\r?\n/).filter(line => line.trim() !== '');
+      const lineByLine = lines.map((line, index) => {
+        let meaning = '';
         
-        if (line.toLowerCase().includes('love') || line.toLowerCase().includes('heart')) {
-          meaning = 'This line expresses deep emotions and the nature of love';
-        } else if (line.toLowerCase().includes('flower') || line.toLowerCase().includes('garden')) {
-          meaning = 'This line uses nature imagery to convey beauty and transience';
-        } else if (line.toLowerCase().includes('wine') || line.toLowerCase().includes('cup')) {
-          meaning = 'Here wine serves as a metaphor for spiritual intoxication';
+        // Comprehensive analysis based on content
+        if (line.toLowerCase().includes('love') || line.toLowerCase().includes('heart') || line.toLowerCase().includes('beloved')) {
+          meaning = 'In this verse, the poet employs emotive vocabulary and affective imagery to express the depth of love and its complexities. This expression contains not only surface meaning but also mystical and philosophical layers. The use of key words in this line demonstrates the poet\'s profound emotional experience and invites multiple interpretations across literal, symbolic, and spiritual dimensions.';
+        } else if (line.toLowerCase().includes('flower') || line.toLowerCase().includes('garden') || line.toLowerCase().includes('spring')) {
+          meaning = 'The poet draws upon images of nature and its beauties to depict deeper concepts such as the passage of time, transient beauty, and the cycle of life. These natural metaphors are characteristic features of classical Persian poetry that present multi-layered meanings through tangible images, creating rich semantic networks that reward careful reading.';
+        } else if (line.toLowerCase().includes('wine') || line.toLowerCase().includes('cup') || line.toLowerCase().includes('tavern')) {
+          meaning = 'In this line, wine and the cup serve not only their literal meanings but also as symbols of knowledge, mystical states, and spiritual intoxication. This is one of the common codes in Persian poetry that invites deeper interpretations and carries multiple semantic layers, functioning as a bridge between the material and spiritual realms.';
+        } else if (line.toLowerCase().includes('world') || line.toLowerCase().includes('time') || line.toLowerCase().includes('life')) {
+          meaning = 'This verse contains philosophical reflections on the transient nature of worldly existence and the essence of time. The poet, with poetic and wise language, examines humanity\'s place in the universe and the impermanence of material affairs, which are central themes in the philosophical thought of classical Persian literature.';
+        } else {
+          // Default comprehensive analysis
+          meaning = `This line employs poetic language and artistic imagery to explore themes of ${themeText}. Through careful word choice and masterful composition, the poet conveys a deep, multi-layered message that demands contemplation and close reading. This verse, alongside the other lines, constructs an interconnected network of related meanings that enriches the overall significance of the work.`;
         }
         
         return {

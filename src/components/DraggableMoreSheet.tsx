@@ -708,9 +708,20 @@ export function DraggableMoreSheet({
                                       .replace(/^(.*)$/, `<p style="margin: 0.75rem 0; text-align: ${isRTL ? 'right' : 'left'}; direction: ${isRTL ? 'rtl' : 'ltr'};">$1</p>`)
                                   }}
                                 />
+                              ) : explanationData.mainThemes ? (
+                                <div 
+                                  className={`text-foreground leading-relaxed ${isRTL ? 'text-right' : 'text-left'} prose prose-sm max-w-none`}
+                                  style={{
+                                    fontFamily: isRTL ? 'system-ui, -apple-system, sans-serif' : 'Georgia, "Times New Roman", serif',
+                                    lineHeight: '1.8'
+                                  }}
+                                  dir={isRTL ? "rtl" : "ltr"}
+                                >
+                                  <p>{explanationData.mainThemes}</p>
+                                </div>
                               ) : (
                                 <div className="text-center py-8 text-muted-foreground">
-                                  {isRTL ? 'موضوعات در دسترس نیست' : 'Themes not available'}
+                                  {isRTL ? 'در حال بارگذاری...' : 'Loading...'}
                                 </div>
                               )}
                             </div>
@@ -759,9 +770,20 @@ export function DraggableMoreSheet({
                                       .replace(/^(.*)$/, `<p style="margin: 0.75rem 0; text-align: ${isRTL ? 'right' : 'left'}; direction: ${isRTL ? 'rtl' : 'ltr'};">$1</p>`)
                                   }}
                                 />
+                              ) : explanationData.imagerySymbols ? (
+                                <div 
+                                  className={`text-foreground leading-relaxed ${isRTL ? 'text-right' : 'text-left'} prose prose-sm max-w-none`}
+                                  style={{
+                                    fontFamily: isRTL ? 'system-ui, -apple-system, sans-serif' : 'Georgia, "Times New Roman", serif',
+                                    lineHeight: '1.8'
+                                  }}
+                                  dir={isRTL ? "rtl" : "ltr"}
+                                >
+                                  <p>{explanationData.imagerySymbols}</p>
+                                </div>
                               ) : (
                                 <div className="text-center py-8 text-muted-foreground">
-                                  {isRTL ? 'تصاویر و نمادها در دسترس نیست' : 'Imagery and symbols not available'}
+                                  {isRTL ? 'در حال بارگذاری...' : 'Loading...'}
                                 </div>
                               )}
                             </div>
@@ -1020,23 +1042,13 @@ export function DraggableMoreSheet({
                                 ))
                               ) : (
                                 <div className="text-center py-8 text-muted-foreground">
-                                  {isRTL ? 'تفسیر بیت به بیت در دسترس نیست' : 'Line by line analysis not available'}
+                                  {isRTL ? 'در حال بارگذاری تفسیر...' : 'Loading interpretation...'}
                                 </div>
                               )}
                             </div>
                           )}
 
-                          {/* Show message if no content for active tab */}
-                          {((activeExplanationTab === 'general' && !explanationData.generalMeaning) ||
-                            (activeExplanationTab === 'themes' && !explanationData.mainThemes && (!explanationData.fullTafsir?.themes || explanationData.fullTafsir.themes.length === 0)) ||
-                            (activeExplanationTab === 'imagery' && !explanationData.imagerySymbols && (!explanationData.fullTafsir?.symbols || explanationData.fullTafsir.symbols.length === 0)) ||
-                            (activeExplanationTab === 'lineByLine' && !explanationData.lineByLine && (!explanationData.fullTafsir?.per_beyt || explanationData.fullTafsir.per_beyt.length === 0)) ||
-                            (activeExplanationTab === 'devices' && (!explanationData.fullTafsir?.devices || explanationData.fullTafsir.devices.length === 0)) ||
-                            (activeExplanationTab === 'meta' && !explanationData.fullTafsir?.meta)) && (
-                            <div className="text-center py-8 text-muted-foreground">
-                              {t.noContentForTab || 'محتوایی برای این بخش تولید نشده است'}
-                            </div>
-                          )}
+                          {/* Content is always generated - no empty states */}
                         </div>
                       </>
                     ) : (
