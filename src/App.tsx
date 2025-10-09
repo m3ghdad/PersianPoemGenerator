@@ -722,9 +722,22 @@ function AppContent() {
         if (result.explanation && !controller.signal.aborted) {
           console.log(`✓ OpenAI explanation received for poem ${poem.id}`);
           
-          // Server returns transformed explanation data - store as is
+          // Ensure all data fields are strings, not objects
+          const sanitizedExplanation = {
+            ...result.explanation,
+            generalMeaning: typeof result.explanation.generalMeaning === 'string' 
+              ? result.explanation.generalMeaning 
+              : JSON.stringify(result.explanation.generalMeaning),
+            mainThemes: typeof result.explanation.mainThemes === 'string'
+              ? result.explanation.mainThemes
+              : JSON.stringify(result.explanation.mainThemes),
+            imagerySymbols: typeof result.explanation.imagerySymbols === 'string'
+              ? result.explanation.imagerySymbols
+              : JSON.stringify(result.explanation.imagerySymbols),
+          };
+          
           const serverResult = {
-            data: result.explanation,
+            data: sanitizedExplanation,
             loading: false,
             error: '',
             timestamp: Date.now()

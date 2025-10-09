@@ -213,7 +213,20 @@ export function DraggableMoreSheet({
       // Always set explanation data, even if there's an error
       // Never show "no response" - always provide fallback content
       if (result.data && Object.keys(result.data).length > 0) {
-        setExplanationData(result.data);
+        // Ensure all text fields are strings, not objects
+        const sanitizedData = {
+          ...result.data,
+          generalMeaning: typeof result.data.generalMeaning === 'object' 
+            ? (result.data.generalMeaning?.paragraph || result.data.generalMeaning?.one_sentence || 'Content unavailable')
+            : result.data.generalMeaning,
+          mainThemes: typeof result.data.mainThemes === 'object'
+            ? 'Themes: ' + (result.data.mainThemes?.map ? result.data.mainThemes.map((t: any) => t.theme || t).join(', ') : 'Content unavailable')
+            : result.data.mainThemes,
+          imagerySymbols: typeof result.data.imagerySymbols === 'object'
+            ? 'Symbols: ' + (result.data.imagerySymbols?.map ? result.data.imagerySymbols.map((s: any) => s.symbol || s).join(', ') : 'Content unavailable')
+            : result.data.imagerySymbols,
+        };
+        setExplanationData(sanitizedData);
       } else {
         // Provide fallback explanation if API failed
         const fallbackData: ExplanationData = {
