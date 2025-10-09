@@ -1,166 +1,209 @@
-import imgRubatarLogo from "figma:asset/9568d55e4870699a55c3b8ec166b4f40c9cb4e3e.png";
+import { useState, useEffect } from 'react';
+import { motion } from 'motion/react';
+import { Button } from './ui/button';
 
 interface LanguageSelectionScreenProps {
   onLanguageSelect: (language: 'fa' | 'en') => void;
 }
 
-function RubatarLogo() {
-  return (
-    <div className="absolute bottom-[-69px] left-[-117px] top-0 w-[948px]" data-name="RubatarLogo">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <img alt="" className="absolute h-[127.74%] left-[-13.67%] max-w-none top-[-10.86%] w-[134.88%]" src={imgRubatarLogo} />
-      </div>
-    </div>
-  );
+interface WelcomePoem {
+  fa: string;
+  en: string;
+  poet: string;
 }
 
-function Overlay() {
-  return <div className="absolute bg-[rgba(0,0,0,0.4)] h-[932px] left-0 top-0 w-[743px]" data-name="Overlay" />;
-}
+const welcomePoems: WelcomePoem[] = [
+  {
+    fa: "خوش آمدی که با تو، دلم تازه شد بهار\nبی‌تو، خزان گرفته بود روزگار",
+    en: "Welcome! With you, my heart has bloomed again\nWithout you, even spring was autumn's pain.",
+    poet: "حافظ"
+  },
+  {
+    fa: "قدم نه، که بهار آمد و گل خندید\nز آمدن تو، باغ جهان خرم دید",
+    en: "Step in, spring has come, and flowers smiled;\nWith your arrival, the garden felt alive.",
+    poet: "سعدی"
+  },
+  {
+    fa: "آمدی و جانِ ما روشن شد\nدل ز دیدار تو گلشن شد",
+    en: "You came, and our souls were lit —\nOur hearts became gardens from your visit.",
+    poet: "مولانا"
+  },
+  {
+    fa: "قدم رنجه فرما، صفا آری\nبه خانه دل، چراغ داری",
+    en: "Grace us with your step, bring light\nYour presence makes the heart's home bright.",
+    poet: "باباطاهر"
+  },
+  {
+    fa: "چون تو آمدی، غم از دل برفت\nهر گوشه جان، چو گل بشکفت",
+    en: "Since you arrived, sorrow departed\nEvery corner of my soul blossomed like a rose.",
+    poet: "خیام"
+  },
+  {
+    fa: "بهار از قدوم تو خوش آمد\nجهان از حضور تو خرم باد",
+    en: "Spring is glad for your arrival\nThe world rejoices in your presence.",
+    poet: "نظامی"
+  },
+  {
+    fa: "آمدی و رونقِ جان تازه شد\nهر نفسی عطرِ جهان تازه شد",
+    en: "You came, and life's delight renewed\nEach breath became the scent of a new world.",
+    poet: "بیدل دهلوی"
+  },
+  {
+    fa: "قدومت گلِ بستانِ دل ماست\nحضورت، طربِ جانِ ماست",
+    en: "Your step is the flower of our heart's garden\nYour presence, the joy of our soul.",
+    poet: "عطار"
+  },
+  {
+    fa: "چو آمدی، همه درد از دل گریخت\nبه شوق تو، دل ما آگهی یافت",
+    en: "When you arrived, all pain fled the heart\nOur hearts awoke with joy at your start.",
+    poet: "فخرالدین عراقی"
+  },
+  {
+    fa: "خوش آمدی، که جهان خوش شد از تو\nدل ما تازه شد، از نیکو روی تو",
+    en: "Welcome, the world is joyful with you,\nOur hearts renewed by your fair view.",
+    poet: "وحشی بافقی"
+  }
+];
 
-function Container() {
-  return (
-    <div className="h-[932px] overflow-clip relative shrink-0 w-full" data-name="Container" style={{ backgroundImage: "linear-gradient(90deg, rgb(0, 0, 0) 0%, rgb(0, 0, 0) 100%), linear-gradient(90deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.5) 100%)" }}>
-      <RubatarLogo />
-      <Overlay />
-    </div>
-  );
-}
-
-function Heading1() {
-  return (
-    <div className="content-stretch flex h-[35.99px] items-start relative shrink-0 w-full" data-name="Heading 1">
-      <p className="basis-0 font-['Inter:Regular',_'Noto_Sans_Arabic:Regular',_sans-serif] font-normal grow leading-[36px] min-h-px min-w-px not-italic relative shrink-0 text-[30px] text-center text-white tracking-[0.3955px]" dir="auto">
-        انتخاب زبان
-      </p>
-    </div>
-  );
-}
-
-function Paragraph() {
-  return (
-    <div className="relative shrink-0 w-full" data-name="Paragraph">
-      <div className="flex flex-col items-center justify-center size-full">
-        <div className="box-border content-stretch flex flex-col gap-[10px] items-center justify-center px-[101px] py-0 relative w-full">
-          <p className="font-['Inter:Regular',_sans-serif] font-normal leading-[28px] not-italic relative shrink-0 text-[18px] text-[rgba(255,255,255,0.6)] text-center text-nowrap tracking-[-0.4395px] whitespace-pre" dir="auto">
-            Choose language
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function Container1() {
-  return (
-    <div className="content-stretch flex flex-col gap-[7.999px] h-[71.989px] items-start relative shrink-0 w-full" data-name="Container">
-      <Heading1 />
-      <Paragraph />
-    </div>
-  );
-}
-
-function Container2() {
-  return (
-    <div className="content-stretch flex flex-col font-['Inter:Regular',_'Noto_Sans_Arabic:Regular',_sans-serif] font-normal gap-[3.995px] h-[55.983px] items-center not-italic relative shrink-0 text-nowrap text-center w-full whitespace-pre" data-name="Container">
-      <p className="leading-[32px] relative shrink-0 text-[24px] text-white tracking-[0.0703px] w-full" dir="auto">
-        فارسی
-      </p>
-      <p className="leading-[20px] relative shrink-0 text-[14px] text-[rgba(255,255,255,0.6)] tracking-[-0.1504px] w-full" dir="auto">
-        شعر کلاسیک
-      </p>
-    </div>
-  );
-}
-
-function Button({ onClick }: { onClick: () => void }) {
-  return (
-    <button 
-      onClick={onClick}
-      className="bg-[rgba(0,0,0,0.4)] h-[105.019px] relative rounded-[16px] shrink-0 w-full cursor-pointer transition-all duration-200 active:scale-95 hover:bg-[rgba(0,0,0,0.5)]" 
-      data-name="Button"
-    >
-      <div className="flex flex-col items-center overflow-clip rounded-[inherit] size-full">
-        <div className="box-border content-stretch flex flex-col h-[105.019px] items-center pb-[0.522px] pt-[24.518px] px-[24.518px] relative w-full">
-          <Container2 />
-        </div>
-      </div>
-      <div aria-hidden="true" className="absolute border-[0.522px] border-[rgba(255,255,255,0.1)] border-solid inset-0 pointer-events-none rounded-[16px]" />
-    </button>
-  );
-}
-
-function Container3() {
-  return (
-    <div className="content-stretch flex flex-col font-['Inter:Regular',_sans-serif] font-normal gap-[3.995px] h-[55.983px] items-center not-italic relative shrink-0 text-nowrap text-center w-full whitespace-pre" data-name="Container">
-      <p className="leading-[32px] relative shrink-0 text-[24px] text-white tracking-[0.0703px] w-full">English</p>
-      <p className="leading-[20px] relative shrink-0 text-[14px] text-[rgba(255,255,255,0.6)] tracking-[-0.1504px] w-full">Translated Poetry</p>
-    </div>
-  );
-}
-
-function Button1({ onClick }: { onClick: () => void }) {
-  return (
-    <button 
-      onClick={onClick}
-      className="bg-[rgba(0,0,0,0.4)] h-[105.019px] relative rounded-[16px] shrink-0 w-full cursor-pointer transition-all duration-200 active:scale-95 hover:bg-[rgba(0,0,0,0.5)]" 
-      data-name="Button"
-    >
-      <div className="overflow-clip rounded-[inherit] size-full">
-        <div className="box-border content-stretch flex flex-col h-[105.019px] items-center pb-[0.522px] pt-[24.518px] px-[24.518px] relative w-full">
-          <Container3 />
-        </div>
-      </div>
-      <div aria-hidden="true" className="absolute border-[0.522px] border-[rgba(255,255,255,0.1)] border-solid inset-0 pointer-events-none rounded-[16px]" />
-    </button>
-  );
-}
-
-function Container4({ onFarsiClick, onEnglishClick }: { onFarsiClick: () => void; onEnglishClick: () => void }) {
-  return (
-    <div className="content-stretch flex flex-col gap-[16px] items-start relative shrink-0 w-full" data-name="Container">
-      <Button onClick={onFarsiClick} />
-      <Button1 onClick={onEnglishClick} />
-    </div>
-  );
-}
-
-function Frame8() {
-  return (
-    <div className="relative shrink-0 w-full">
-      <div className="flex flex-col items-center justify-center size-full">
-        <div className="box-border content-stretch flex flex-col font-normal gap-[10px] items-center justify-center leading-[16px] not-italic p-[10px] relative text-[12px] text-[rgba(255,255,255,0.4)] text-center text-nowrap w-full whitespace-pre">
-          <p className="font-['Inter:Regular',_'Noto_Sans_Arabic:Regular',_sans-serif] relative shrink-0" dir="auto">
-            می‌توانید این را هر زمان تغییر دهید
-          </p>
-          <p className="font-['Inter:Regular',_sans-serif] relative shrink-0">You can change this anytime</p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function LanguageSelectionContent({ onFarsiClick, onEnglishClick }: { onFarsiClick: () => void; onEnglishClick: () => void }) {
-  return (
-    <div className="absolute box-border content-stretch flex flex-col gap-[47.992px] inset-[286px_19px_251.99px_18px] items-start px-[23.996px] py-0" data-name="LanguageSelectionScreen">
-      <Container1 />
-      <Container4 onFarsiClick={onFarsiClick} onEnglishClick={onEnglishClick} />
-      <Frame8 />
-    </div>
-  );
-}
+// English poet names
+const poetNamesEn: Record<string, string> = {
+  "حافظ": "Hafez",
+  "سعدی": "Saadi",
+  "مولانا": "Rumi",
+  "باباطاهر": "Baba Taher",
+  "خیام": "Khayyam",
+  "نظامی": "Nezami",
+  "بیدل دهلوی": "Bidel Dehlavi",
+  "عطار": "Attar",
+  "فخرالدین عراقی": "Fakhruddin Iraqi",
+  "وحشی بافقی": "Vahshi Bafqi"
+};
 
 export function LanguageSelectionScreen({ onLanguageSelect }: LanguageSelectionScreenProps) {
+  // Random poem on each load
+  const [currentPoem] = useState(() => Math.floor(Math.random() * welcomePoems.length));
+  const [displayedText, setDisplayedText] = useState('');
+  const [showFarsi, setShowFarsi] = useState(true);
+
+  // Typewriter effect for the poem
+  useEffect(() => {
+    const poem = welcomePoems[currentPoem];
+    const text = showFarsi ? poem.fa : poem.en;
+    let currentIndex = 0;
+    
+    setDisplayedText(''); // Reset
+    
+    const typeInterval = setInterval(() => {
+      if (currentIndex <= text.length) {
+        setDisplayedText(text.slice(0, currentIndex));
+        currentIndex++;
+      } else {
+        clearInterval(typeInterval);
+      }
+    }, 50); // 50ms per character
+    
+    return () => clearInterval(typeInterval);
+  }, [currentPoem, showFarsi]);
+
+  // Alternate between Farsi and English every 8 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setShowFarsi(prev => !prev);
+    }, 8000);
+    
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <div className="language-selection-container bg-black content-stretch flex flex-col gap-[10px] items-center justify-center relative size-full fixed inset-0 z-[9999]" data-name="WelcomeScreen">
-      <Container />
-      <p className="absolute bottom-[722px] leading-[48px] left-[calc(50%-86.5px)] text-[48px] text-neutral-50 text-nowrap top-[162px] tracking-[0.0508px] whitespace-pre" dir="auto" style={{ fontFamily: "'Noto Nastaliq Urdu', Tahoma, Arial, sans-serif" }}>
-        رباعی وتار
-      </p>
-      <LanguageSelectionContent 
-        onFarsiClick={() => onLanguageSelect('fa')} 
-        onEnglishClick={() => onLanguageSelect('en')} 
-      />
+    <div className="h-screen w-full bg-background flex flex-col items-center justify-center px-6">
+      {/* Main content container */}
+      <div className="w-full max-w-md flex flex-col items-center" style={{ gap: '24px' }}>
+        {/* Title */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="flex flex-col items-center"
+        >
+          <h1 className="text-[48px] text-foreground text-center" dir="rtl" style={{ fontFamily: "'Noto Nastaliq Urdu', serif" }}>
+            رباعی وتار
+          </h1>
+        </motion.div>
+
+        {/* Welcome poem - fixed height to prevent layout shift */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+          className="w-full flex flex-col items-center justify-center"
+          style={{ height: '160px' }}
+        >
+          <div 
+            className="text-lg md:text-xl font-medium text-foreground/80 whitespace-pre-line text-center leading-loose"
+            dir={showFarsi ? 'rtl' : 'ltr'}
+            style={{ 
+              lineHeight: '1.8',
+              fontFamily: showFarsi ? "'Noto Nastaliq Urdu', serif" : "'Inter', sans-serif"
+            }}
+          >
+            {displayedText.split('\n').map((line, i) => (
+              <div key={i} className="mb-2">
+                {line}
+                {i === displayedText.split('\n').length - 1 && line.length < (showFarsi ? welcomePoems[currentPoem].fa : welcomePoems[currentPoem].en).length && (
+                  <motion.span
+                    animate={{ opacity: [1, 0, 1] }}
+                    transition={{ duration: 0.8, repeat: Infinity }}
+                    className="inline-block w-0.5 h-5 bg-foreground/60 ml-1"
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Language buttons using shadcn/ui Button (horizontal) */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.6 }}
+          className="flex flex-row items-center"
+          style={{ gap: '8px' }}
+        >
+          <Button
+            onClick={() => onLanguageSelect('fa')}
+            size="lg"
+            className="text-[20px] font-medium px-4 py-4"
+            style={{ width: '120px' }}
+          >
+            فارسی
+          </Button>
+
+          <Button
+            onClick={() => onLanguageSelect('en')}
+            variant="secondary"
+            size="lg"
+            className="text-[20px] font-medium px-4 py-4"
+            style={{ width: '120px' }}
+          >
+            English
+          </Button>
+        </motion.div>
+
+        {/* Subtitle below buttons */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.8 }}
+          className="flex flex-col items-center gap-1"
+        >
+          <p className="text-[12px] text-muted-foreground text-center" dir="auto">
+            می‌توانید این را هر زمان تغییر دهید
+          </p>
+          <p className="text-[12px] text-muted-foreground text-center">
+            You can change this anytime
+          </p>
+        </motion.div>
+      </div>
     </div>
   );
 }
