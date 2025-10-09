@@ -117,7 +117,7 @@ export function LanguageSelectionScreen({ onLanguageSelect }: LanguageSelectionS
   return (
     <div className="h-screen w-full bg-background flex flex-col items-center justify-center px-6">
       {/* Main content container */}
-      <div className="w-full max-w-md flex flex-col items-center" style={{ gap: '16px' }}>
+      <div className="w-full max-w-md flex flex-col items-center" style={{ gap: '24px' }}>
         {/* Title */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -177,13 +177,14 @@ export function LanguageSelectionScreen({ onLanguageSelect }: LanguageSelectionS
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.6 }}
-          className="w-full flex flex-col"
+          className="flex flex-col items-center"
           style={{ gap: '8px' }}
         >
           <Button
             onClick={() => onLanguageSelect('fa')}
             size="lg"
-            className="w-full text-[20px] font-medium px-4 py-4"
+            className="text-[20px] font-medium px-4 py-4"
+            style={{ width: '120px' }}
           >
             فارسی
           </Button>
@@ -191,7 +192,8 @@ export function LanguageSelectionScreen({ onLanguageSelect }: LanguageSelectionS
           <Button
             onClick={() => onLanguageSelect('en')}
             size="lg"
-            className="w-full text-[20px] font-medium px-4 py-4"
+            className="text-[20px] font-medium px-4 py-4"
+            style={{ width: '120px' }}
           >
             English
           </Button>
