@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Music, Music2, Music3, Music4 } from 'lucide-react';
+import { RingLoader } from 'react-spinners';
 
 interface LoadingPoem {
   fa: string;
@@ -146,30 +147,42 @@ export function DelightfulLoader({ language, message, progress = 0 }: Delightful
 
       {/* Main content */}
       <div className="relative z-10 w-full max-w-2xl px-6 flex flex-col items-center justify-center space-y-8">
-        {/* Percentage display */}
-        {progress > 0 && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ 
-              opacity: 1, 
-              scale: 1,
-            }}
-            className="text-foreground font-bold text-5xl md:text-6xl mb-4"
-          >
-            <motion.span
-              animate={{
-                opacity: [0.5, 1, 0.5]
+        {/* Spinner with percentage */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8 }}
+          className="relative flex flex-col items-center gap-4"
+        >
+          <div className="relative">
+            <RingLoader
+              color="currentColor"
+              loading={true}
+              size={120}
+              speedMultiplier={0.8}
+              cssOverride={{
+                opacity: 0.4
               }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-            >
-              {Math.round(progress)}%
-            </motion.span>
-          </motion.div>
-        )}
+            />
+            
+            {/* Percentage in center of spinner */}
+            {progress > 0 && (
+              <motion.div
+                className="absolute inset-0 flex items-center justify-center text-foreground font-bold text-4xl md:text-5xl"
+                animate={{
+                  opacity: [0.6, 1, 0.6]
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+              >
+                {Math.round(progress)}%
+              </motion.div>
+            )}
+          </div>
+        </motion.div>
 
         {/* Poem text with typewriter effect */}
         <AnimatePresence mode="wait">
