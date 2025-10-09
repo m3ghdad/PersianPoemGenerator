@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
+import { Button } from './ui/button';
 
 interface LanguageSelectionScreenProps {
   onLanguageSelect: (language: 'fa' | 'en') => void;
@@ -114,33 +115,36 @@ export function LanguageSelectionScreen({ onLanguageSelect }: LanguageSelectionS
   }, []);
 
   return (
-    <div className="h-screen w-full bg-background flex flex-col items-center justify-center px-6 overflow-hidden">
+    <div className="h-screen w-full bg-background flex flex-col items-center justify-center px-6">
       {/* Main content container */}
       <div className="w-full max-w-md flex flex-col items-center space-y-8">
-        {/* Heading */}
+        {/* Title */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="flex flex-col items-center gap-2"
+          className="flex flex-col items-center gap-3"
         >
-          <h1 className="text-[30px] text-foreground font-normal text-center" dir="auto">
-            انتخاب زبان
+          <h1 className="text-[30px] text-foreground font-['Noto_Nastaliq_Urdu',_serif] text-center" dir="rtl">
+            رباعی وتار
           </h1>
+          <p className="text-[18px] text-muted-foreground text-center" dir="auto">
+            می‌توانید این را هر زمان تغییر دهید
+          </p>
           <p className="text-[18px] text-muted-foreground text-center">
-            Choose language
+            You can change this anytime
           </p>
         </motion.div>
 
-        {/* Welcome poem in container */}
+        {/* Welcome poem - no container */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="w-full bg-muted/20 backdrop-blur-xl rounded-2xl border border-border/50 p-6 min-h-[160px] flex flex-col items-center justify-center"
+          className="w-full min-h-[140px] flex flex-col items-center justify-center"
         >
           <div 
-            className={`text-lg md:text-xl font-medium text-foreground/90 whitespace-pre-line text-center leading-loose ${
+            className={`text-lg md:text-xl font-medium text-foreground/80 whitespace-pre-line text-center leading-loose ${
               showFarsi ? 'font-[\'Noto_Nastaliq_Urdu\',_serif]' : 'font-[\'Inter\',_sans-serif]'
             }`}
             dir={showFarsi ? 'rtl' : 'ltr'}
@@ -173,42 +177,30 @@ export function LanguageSelectionScreen({ onLanguageSelect }: LanguageSelectionS
           </motion.p>
         </motion.div>
 
-        {/* Language buttons */}
+        {/* Language buttons using shadcn/ui Button */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.6 }}
           className="w-full flex flex-col gap-4"
         >
-          {/* Farsi button */}
-          <button 
+          <Button
             onClick={() => onLanguageSelect('fa')}
-            className="bg-muted/30 backdrop-blur-xl hover:bg-muted/50 h-[105px] rounded-2xl w-full cursor-pointer transition-all duration-200 active:scale-95 border border-border/50"
+            variant="outline"
+            size="lg"
+            className="w-full h-[60px] text-[20px] font-medium"
           >
-            <div className="flex flex-col items-center justify-center h-full px-6 py-6">
-              <p className="text-[24px] text-foreground font-medium leading-[32px]" dir="auto">
-                فارسی
-              </p>
-              <p className="text-[14px] text-muted-foreground leading-[20px]" dir="auto">
-                شعر کلاسیک
-              </p>
-            </div>
-          </button>
+            فارسی
+          </Button>
 
-          {/* English button */}
-          <button 
+          <Button
             onClick={() => onLanguageSelect('en')}
-            className="bg-muted/30 backdrop-blur-xl hover:bg-muted/50 h-[105px] rounded-2xl w-full cursor-pointer transition-all duration-200 active:scale-95 border border-border/50"
+            variant="outline"
+            size="lg"
+            className="w-full h-[60px] text-[20px] font-medium"
           >
-            <div className="flex flex-col items-center justify-center h-full px-6 py-6">
-              <p className="text-[24px] text-foreground font-medium leading-[32px]">
-                English
-              </p>
-              <p className="text-[14px] text-muted-foreground leading-[20px]">
-                Translated Poetry
-              </p>
-            </div>
-          </button>
+            English
+          </Button>
         </motion.div>
       </div>
     </div>
