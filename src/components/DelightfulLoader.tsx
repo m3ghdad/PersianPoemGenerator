@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Music, Music2, Music3, Music4 } from 'lucide-react';
-import { RingLoader } from 'react-spinners';
+import { BounceLoader } from 'react-spinners';
 
 interface LoadingPoem {
   fa: string;
@@ -154,21 +154,18 @@ export function DelightfulLoader({ language, message, progress = 0 }: Delightful
           transition={{ duration: 0.8 }}
           className="relative flex flex-col items-center gap-4"
         >
-          <div className="relative">
-            <RingLoader
-              color="currentColor"
+          <div className="relative flex flex-col items-center gap-6">
+            <BounceLoader
+              color="#ffffff"
               loading={true}
-              size={120}
-              speedMultiplier={0.8}
-              cssOverride={{
-                opacity: 0.4
-              }}
+              size={80}
+              speedMultiplier={1}
             />
             
-            {/* Percentage in center of spinner */}
+            {/* Percentage below spinner */}
             {progress > 0 && (
               <motion.div
-                className="absolute inset-0 flex items-center justify-center text-foreground font-bold text-4xl md:text-5xl"
+                className="text-foreground font-bold text-4xl md:text-5xl"
                 animate={{
                   opacity: [0.6, 1, 0.6]
                 }}
