@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Music, Music2, Music3, Music4 } from 'lucide-react';
 import { MoonLoader } from 'react-spinners';
+import { toFarsiNumber } from '../utils/numberUtils';
 
 interface LoadingPoem {
   fa: string;
@@ -89,26 +90,24 @@ export function DelightfulLoader({ language, message, progress = 0 }: Delightful
   const [isRTL] = useState(language === 'fa');
   const [displayedProgress, setDisplayedProgress] = useState(0);
   
-  // Smooth counting animation for progress
+  // Smooth counting animation from 0 to 100 (never freezes at intermediate values)
   useEffect(() => {
-    const targetProgress = progress || 0;
-    const increment = targetProgress > displayedProgress ? 1 : -1;
-    
-    if (displayedProgress !== targetProgress) {
+    // Always count to 100 smoothly
+    if (displayedProgress < 100) {
       const timer = setTimeout(() => {
         setDisplayedProgress(prev => {
-          const next = prev + increment;
-          if (increment > 0) {
-            return Math.min(next, targetProgress);
-          } else {
-            return Math.max(next, targetProgress);
+          // If we have actual progress, sync towards it faster
+          if (progress > prev) {
+            return Math.min(prev + 2, progress, 100);
           }
+          // Otherwise, slowly increment towards 100
+          return Math.min(prev + 1, 100);
         });
-      }, 20); // Update every 20ms for smooth animation
+      }, 30); // Update every 30ms for smooth but not too fast animation
       
       return () => clearTimeout(timer);
     }
-  }, [progress, displayedProgress]);
+  }, [displayedProgress, progress]);
   
   // Rotate through poems every 8 seconds
   useEffect(() => {
@@ -210,7 +209,10 @@ export function DelightfulLoader({ language, message, progress = 0 }: Delightful
                 opacity: { duration: 2, repeat: Infinity, ease: "easeInOut" }
               }}
             >
-              {displayedProgress}%
+              {language === 'fa' 
+                ? `${toFarsiNumber(displayedProgress)}٪` 
+                : `${displayedProgress}%`
+              }
             </motion.div>
           </div>
         </motion.div>
