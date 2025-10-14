@@ -434,6 +434,14 @@ function AppContent() {
       
       // Create poem object
       const poemText = data.plainText || data.text || '';
+      
+      // Filter: Only accept poems with 10 lines or fewer
+      const lines = poemText.trim().split(/\r?\n/).filter(line => line.trim() !== '');
+      if (lines.length > 10) {
+        console.log(`Skipping poem ${data.id} - too long (${lines.length} lines)`);
+        return null; // Skip this poem and try another
+      }
+      
       const poem = {
         id: data.id,
         title: (data.title || 'بدون عنوان').trim(),
@@ -445,6 +453,8 @@ function AppContent() {
           fullName: data.poet?.fullName || poetName
         }
       };
+      
+      console.log(`✓ Accepted poem ${data.id} - ${lines.length} lines`);
       
       // Success - reset failure count and add to used poems
       resetApiFailures();
