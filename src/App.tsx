@@ -302,6 +302,7 @@ function AppContent() {
   
   // Sheet states
   const [authSheetOpen, setAuthSheetOpen] = useState(false);
+  const [authSheetReason, setAuthSheetReason] = useState<'favorites' | 'explanation'>('favorites');
   const [profileSheetOpen, setProfileSheetOpen] = useState(false);
   const [favoritesSheetOpen, setFavoritesSheetOpen] = useState(false);
   const [moreSheetOpen, setMoreSheetOpen] = useState(false);
@@ -1432,6 +1433,7 @@ POET:
 
   // Handle auth requirement for favorites
   const handleAuthRequired = () => {
+    setAuthSheetReason('favorites');
     setAuthSheetOpen(true);
   };
 
@@ -1452,15 +1454,12 @@ POET:
 
   // Handle more button click - require auth to view explanation
   const handleMoreOpen = () => {
-    // TEMPORARY: Allow access without login for testing
-    // TODO: Re-enable authentication check before production
-    setMoreSheetOpen(true);
-    
-    // if (user) {
-    //   setMoreSheetOpen(true);
-    // } else {
-    //   setAuthSheetOpen(true);
-    // }
+    if (user) {
+      setMoreSheetOpen(true);
+    } else {
+      setAuthSheetReason('explanation');
+      setAuthSheetOpen(true);
+    }
   };
 
   // Handle mute toggle
@@ -1894,7 +1893,7 @@ POET:
       
       {/* Video Playlist - Audio Only (hidden) */}
       <div className="hidden">
-        <VideoPlaylist ref={videoPlaylistRef} isMuted={isMuted} />
+      <VideoPlaylist ref={videoPlaylistRef} isMuted={isMuted} />
       </div>
 
       {/* Render cards - only render visible cards for performance */}
@@ -2005,7 +2004,8 @@ POET:
       {/* Auth Sheet */}
       <AuthSheet 
         open={authSheetOpen} 
-        onOpenChange={setAuthSheetOpen} 
+        onOpenChange={setAuthSheetOpen}
+        reason={authSheetReason}
       />
 
       {/* Profile Sheet */}

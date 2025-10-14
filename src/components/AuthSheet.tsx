@@ -21,9 +21,10 @@ const ThemedGrabber = ({ shouldPulse = false }: { shouldPulse?: boolean }) => (
 interface AuthSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  reason?: 'favorites' | 'explanation';
 }
 
-export function AuthSheet({ open, onOpenChange }: AuthSheetProps) {
+export function AuthSheet({ open, onOpenChange, reason = 'favorites' }: AuthSheetProps) {
   const [mode, setMode] = useState<'signin' | 'signup' | 'reset' | 'resetPassword'>('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -508,7 +509,7 @@ export function AuthSheet({ open, onOpenChange }: AuthSheetProps) {
               {mode === 'resetPassword' && (isRTL ? 'تنظیم رمز عبور جدید' : 'Set New Password')}
             </h2>
             <p className="text-muted-foreground text-sm mt-1">
-              {mode === 'signin' && t.accessToFavorites}
+              {mode === 'signin' && (reason === 'explanation' ? t.accessToExplanation : t.accessToFavorites)}
               {mode === 'signup' && t.createNewUserAccount}
               {mode === 'reset' && t.enterYourEmail}
               {mode === 'resetPassword' && (isRTL ? 'لطفاً رمز عبور جدید خود را وارد کنید' : 'Please enter your new password')}
