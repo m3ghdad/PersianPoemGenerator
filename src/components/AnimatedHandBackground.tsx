@@ -8,7 +8,7 @@ export function AnimatedHandBackground() {
       <div className="absolute inset-0 bg-gradient-to-br from-background via-background/98 to-background/95" />
       
       {/* Main illustration */}
-      <div className="absolute inset-0 flex items-center justify-center opacity-20">
+      <div className="absolute inset-0 flex items-end justify-center opacity-20" style={{ paddingBottom: '64px' }}>
         <div className="w-full max-w-4xl aspect-square">
           <svg className="block size-full" fill="none" preserveAspectRatio="xMidYMid meet" viewBox="0 0 1024 1024">
             <g id="illustration 2">
