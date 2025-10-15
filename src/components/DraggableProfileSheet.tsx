@@ -18,6 +18,7 @@ import {
   Camera,
   Moon,
   Sun,
+  Globe,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { useTheme } from "../contexts/ThemeContext";
@@ -49,7 +50,7 @@ export function DraggableProfileSheet({
   const { user, signOut, refreshSession } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const { profileImage, setProfileImage } = useProfile();
-  const { t, isRTL } = useLanguage();
+  const { language, setLanguage, t, isRTL } = useLanguage();
   const [uploading, setUploading] = useState(false);
   
   // Dragging state
@@ -532,6 +533,35 @@ export function DraggableProfileSheet({
                       }`}
                     />
                   </div>
+                </div>
+              </div>
+
+              {/* Language Selector */}
+              <div className="flex items-center justify-between py-4 border-b border-border">
+                <div className={`flex items-center ${isRTL ? 'space-x-3 space-x-reverse' : 'space-x-3'}`}>
+                  <Globe
+                    size={20}
+                    className="text-muted-foreground"
+                  />
+                  <span className="text-foreground">{language === 'fa' ? 'زبان' : 'Language'}</span>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant={language === 'fa' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setLanguage('fa')}
+                    className="rounded-full"
+                  >
+                    فارسی
+                  </Button>
+                  <Button
+                    variant={language === 'en' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setLanguage('en')}
+                    className="rounded-full"
+                  >
+                    English
+                  </Button>
                 </div>
               </div>
 

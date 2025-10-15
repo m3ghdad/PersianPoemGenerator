@@ -11,6 +11,7 @@ import { DraggableFavoritesSheet } from './components/DraggableFavoritesSheet';
 import { DraggableMoreSheet } from './components/DraggableMoreSheet';
 import { VideoPlaylist, VideoPlaylistRef } from './components/VideoPlaylist';
 import { VideoControls } from './components/VideoControls';
+import { PoemNavigation } from './components/PoemNavigation';
 import { AnimatedHandBackground } from './components/AnimatedHandBackground';
 import AnimatedGroup from './components/AnimatedGroup';
 import { TypewriterText } from './components/TypewriterText';
@@ -1455,7 +1456,7 @@ POET:
   // Handle more button click - require auth to view explanation
   const handleMoreOpen = () => {
     if (user) {
-      setMoreSheetOpen(true);
+    setMoreSheetOpen(true);
     } else {
       setAuthSheetReason('explanation');
       setAuthSheetOpen(true);
@@ -1958,7 +1959,7 @@ POET:
           </div>
         </div>
       )}
-
+      
       {/* Button Stack with Language, Refresh, More and Favorite buttons */}
       <ButtonStack 
         poem={poems.length > 0 ? poems[currentIndex] : undefined}
@@ -1989,9 +1990,17 @@ POET:
       )}
 
       {/* Video Controls - positioned 64px from bottom */}
-      <VideoControls 
+      {/* Commented out for future music player feature */}
+      {/* <VideoControls 
         onNext={handleVideoNext}
         onPrevious={handleVideoPrevious}
+      /> */}
+
+      {/* Poem Navigation - bottom left chevron buttons */}
+      <PoemNavigation
+        currentIndex={currentIndex}
+        totalPoems={poems.length}
+        onNavigate={navigateToPoem}
       />
 
       {/* Animated Group - centered at bottom of page */}
@@ -2004,7 +2013,7 @@ POET:
       {/* Auth Sheet */}
       <AuthSheet 
         open={authSheetOpen} 
-        onOpenChange={setAuthSheetOpen}
+        onOpenChange={setAuthSheetOpen} 
         reason={authSheetReason}
       />
 

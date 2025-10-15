@@ -199,6 +199,10 @@ export interface Translations {
   
   // Password reset
   passwordUpdated: string;
+
+  // Poem navigation
+  nextPoem: string;
+  previousPoem: string;
 }
 
 export const translations: Record<Language, Translations> = {
@@ -399,6 +403,10 @@ export const translations: Record<Language, Translations> = {
     
     // Password reset
     passwordUpdated: 'رمز عبور با موفقیت بروزرسانی شد!',
+
+    // Poem navigation
+    nextPoem: 'شعر بعدی',
+    previousPoem: 'شعر قبلی',
   },
   
   en: {
@@ -598,6 +606,10 @@ export const translations: Record<Language, Translations> = {
     
     // Password reset
     passwordUpdated: 'Password updated successfully!',
+
+    // Poem navigation
+    nextPoem: 'Next poem',
+    previousPoem: 'Previous poem',
   }
 };
 

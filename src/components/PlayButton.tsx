@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
+import { Play, Pause } from 'lucide-react';
+import { Button } from './ui/button';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTheme } from '../contexts/ThemeContext';
-import svgPlayPaths from '../imports/svg-1ebf8vx3an';
-import svgPausePaths from '../imports/svg-znizth8oyx';
 
 interface Poem {
   id: number;
@@ -140,55 +140,31 @@ export function PlayButton({ poem }: PlayButtonProps) {
   };
 
   return (
-    <>
-      <button
+    <div className="relative">
+      <Button
+        variant="outline"
+        size="icon"
+        className="rounded-full shadow-lg"
         onClick={handlePlayPause}
         disabled={isLoading}
-        className="w-10 h-10 rounded-full shadow-2xl backdrop-blur-xl border border-white/20 transition-all duration-300 hover:scale-105 active:scale-95 flex items-center justify-center group relative overflow-hidden disabled:opacity-50"
-        style={{
-          background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05))',
-          boxShadow: `
-            0 8px 32px rgba(0, 0, 0, 0.3),
-            inset 0 1px 0 rgba(255, 255, 255, 0.2),
-            inset 0 -1px 0 rgba(0, 0, 0, 0.1)
-          `,
-        }}
         aria-label={isPlaying ? "Pause poem" : "Play poem"}
         title={isPlaying ? "Pause poem" : "Play poem"}
       >
-        {/* Button content */}
-        <div className="w-4 h-4">
-          {isLoading ? (
-            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-          ) : isPlaying ? (
-            <div className="relative shrink-0 size-[16px]" data-name="Pause">
-              <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 16 16">
-                <g id="Pause">
-                  <path d={svgPausePaths.p15b16e00} fill="var(--fill-0, #FAFAFA)" id="Vector" />
-                </g>
-              </svg>
-            </div>
-          ) : (
-            <div className="relative shrink-0 size-[16px]" data-name="Play">
-              <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 16 16">
-                <g id="Play">
-                  <path d={svgPlayPaths.p29890330} fill="var(--fill-0, #FAFAFA)" id="Vector" />
-                </g>
-              </svg>
-            </div>
-          )}
-        </div>
-        
-        {/* Hover effect */}
-        <div className="absolute inset-0 rounded-full shadow-[0px_4px_16px_0px_rgba(59,130,246,0.3)] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-      </button>
+        {isLoading ? (
+          <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+        ) : isPlaying ? (
+          <Pause />
+        ) : (
+          <Play />
+        )}
+      </Button>
 
       {/* Error indicator */}
       {error && (
-        <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-red-500/90 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+        <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-red-500/90 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-50">
           {error}
         </div>
       )}
-    </>
+    </div>
   );
 }
