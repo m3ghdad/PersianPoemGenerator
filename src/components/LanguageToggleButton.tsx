@@ -10,7 +10,7 @@ interface LanguageToggleButtonProps {
 export function LanguageToggleButton({ onLanguageChange }: LanguageToggleButtonProps) {
   const { language, setLanguage } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
-  const [menuPosition, setMenuPosition] = useState<{ top: number; right: number }>({ top: 0, right: 0 });
+  const [menuPosition, setMenuPosition] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   const handleLanguageChange = (newLanguage: 'fa' | 'en') => {
@@ -26,13 +26,17 @@ export function LanguageToggleButton({ onLanguageChange }: LanguageToggleButtonP
   const handleClick = () => {
     if (buttonRef.current && !isOpen) {
       const rect = buttonRef.current.getBoundingClientRect();
+      const menuWidth = 128; // w-32 in Tailwind
       const gap = 8;
 
       // fixed elements use viewport coords, no scroll offsets
+      const left = rect.left - menuWidth - gap;
       const top = rect.top;
-      const right = window.innerWidth - rect.left + gap; // 8px to the left of the button
 
-      setMenuPosition({ top, right });
+      setMenuPosition({ 
+        top, 
+        left: Math.max(16, left) // keep screen clamp
+      });
     }
     setIsOpen(!isOpen);
   };
@@ -80,7 +84,7 @@ export function LanguageToggleButton({ onLanguageChange }: LanguageToggleButtonP
           className="fixed z-[9999] w-32 bg-[rgba(38,38,38,0.95)] backdrop-blur-xl rounded-[34px] border border-white/20 shadow-2xl"
           style={{
             top: `${menuPosition.top}px`,
-            right: `${Math.max(16, menuPosition.right)}px`
+            left: `${menuPosition.left}px`
           }}
         >
           <div className="py-2">
